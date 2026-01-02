@@ -1,7 +1,7 @@
 import { WidgetSettings } from '../types';
 
 export abstract class Widget {
-    protected containerEl: HTMLElement;
+    protected containerEl?: HTMLElement;
     protected settings: WidgetSettings;
 
     constructor(settings: WidgetSettings) {

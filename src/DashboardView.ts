@@ -42,7 +42,7 @@ export class DashboardView extends ItemView {
 
         // Render widgets in order
         for (const widgetId of this.settings.widgetOrder) {
-            if (!this.settings.enabledWidgets.contains(widgetId)) {
+            if (!this.settings.enabledWidgets.includes(widgetId)) {
                 continue;
             }
 

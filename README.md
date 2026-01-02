@@ -2,6 +2,8 @@
 
 Extensible dashboard for visualizing Obsidian vault analytics.
 
+**Repository:** https://github.com/caritos/obsidian-dashboard
+
 ## Features
 
 - **Activity Heatmap** - GitHub-style visualization of note creation/modification

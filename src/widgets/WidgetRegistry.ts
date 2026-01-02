@@ -1,13 +1,13 @@
 import { Widget } from './Widget';
 import { WidgetSettings } from '../types';
 
-type WidgetConstructor = new (settings: WidgetSettings) => Widget;
+type WidgetFactory = (settings: WidgetSettings) => Widget;
 
 export class WidgetRegistry {
-    private widgets: Map<string, WidgetConstructor> = new Map();
+    private widgets: Map<string, WidgetFactory> = new Map();
 
-    register(id: string, widgetClass: WidgetConstructor) {
-        this.widgets.set(id, widgetClass);
+    register(id: string, factory: WidgetFactory) {
+        this.widgets.set(id, factory);
     }
 
     unregister(id: string) {
@@ -15,12 +15,12 @@ export class WidgetRegistry {
     }
 
     create(id: string, settings: WidgetSettings): Widget | null {
-        const WidgetClass = this.widgets.get(id);
-        if (!WidgetClass) {
+        const factory = this.widgets.get(id);
+        if (!factory) {
             console.error(`Widget ${id} not found in registry`);
             return null;
         }
-        return new WidgetClass(settings);
+        return factory(settings);
     }
 
     getRegisteredIds(): string[] {

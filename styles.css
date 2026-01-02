@@ -1,0 +1,86 @@
+/* Dashboard View */
+.dashboard-view {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.dashboard-header {
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--background-modifier-border);
+    padding-bottom: 10px;
+}
+
+.dashboard-header h2 {
+    margin: 0;
+    color: var(--text-normal);
+}
+
+/* Widgets */
+.dashboard-widgets {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.dashboard-widget-container {
+    padding: 20px;
+    background: var(--background-primary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 8px;
+}
+
+.widget-header {
+    margin-bottom: 15px;
+}
+
+.widget-header h3 {
+    margin: 0;
+    color: var(--text-normal);
+    font-size: 1.1em;
+}
+
+/* Heatmap */
+.heatmap-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.heatmap-svg {
+    display: block;
+}
+
+.heatmap-cell {
+    transition: opacity 0.2s;
+}
+
+.heatmap-cell:hover {
+    opacity: 0.7;
+    stroke: var(--text-accent);
+    stroke-width: 1;
+}
+
+/* Theme-adaptive colors */
+.heatmap-level-0 {
+    fill: var(--background-secondary);
+}
+
+.heatmap-level-1 {
+    fill: var(--interactive-accent);
+    opacity: 0.3;
+}
+
+.heatmap-level-2 {
+    fill: var(--interactive-accent);
+    opacity: 0.5;
+}
+
+.heatmap-level-3 {
+    fill: var(--interactive-accent);
+    opacity: 0.7;
+}
+
+.heatmap-level-4 {
+    fill: var(--interactive-accent);
+    opacity: 1;
+}

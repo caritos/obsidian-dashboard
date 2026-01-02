@@ -2,6 +2,7 @@ import { Plugin, WorkspaceLeaf } from 'obsidian';
 import { DashboardSettings, DEFAULT_SETTINGS } from './types';
 import { DashboardView, VIEW_TYPE_DASHBOARD } from './DashboardView';
 import { WidgetRegistry } from './widgets/WidgetRegistry';
+import { ActivityHeatmapWidget } from './widgets/ActivityHeatmapWidget';
 
 export default class DashboardPlugin extends Plugin {
     settings: DashboardSettings;
@@ -12,6 +13,11 @@ export default class DashboardPlugin extends Plugin {
 
         // Initialize widget registry
         this.widgetRegistry = new WidgetRegistry();
+
+        // Register widgets
+        this.widgetRegistry.register('activity-heatmap', (settings) => {
+            return new ActivityHeatmapWidget(this.app.vault, settings as any);
+        });
 
         // Register view
         this.registerView(

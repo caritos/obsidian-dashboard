@@ -116,3 +116,55 @@
 .note-link:hover {
     text-decoration: underline;
 }
+
+/* Stats Widget */
+.stats-container {
+    padding: 10px 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    background: var(--background-secondary);
+    border-radius: 6px;
+    border: 1px solid var(--background-modifier-border);
+}
+
+.stat-icon {
+    font-size: 24px;
+    opacity: 0.8;
+}
+
+.stat-icon-emoji {
+    display: inline-block;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-label {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 1.3em;
+    font-weight: 600;
+    color: var(--text-normal);
+}
+
+.stat-subtitle {
+    font-size: 0.75em;
+    color: var(--text-muted);
+    margin-top: 2px;
+}

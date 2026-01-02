@@ -3,6 +3,7 @@ import { DashboardSettings, DEFAULT_SETTINGS, WidgetSettings } from './types';
 import { DashboardView, VIEW_TYPE_DASHBOARD } from './DashboardView';
 import { WidgetRegistry } from './widgets/WidgetRegistry';
 import { ActivityHeatmapWidget } from './widgets/ActivityHeatmapWidget';
+import { StatsWidget } from './widgets/StatsWidget';
 
 export default class DashboardPlugin extends Plugin {
     settings: DashboardSettings;
@@ -20,6 +21,13 @@ export default class DashboardPlugin extends Plugin {
                 days: number;
                 countMode: 'unique' | 'total';
                 colorScheme: 'theme-adaptive' | 'github-green' | 'custom';
+            });
+        });
+
+        this.widgetRegistry.register('stats', (settings: WidgetSettings) => {
+            return new StatsWidget(this.app, settings as WidgetSettings & {
+                visibleMetrics: string[];
+                streakMinNotes: number;
             });
         });
 

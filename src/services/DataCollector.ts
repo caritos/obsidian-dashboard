@@ -19,36 +19,49 @@ export class DataCollector {
         }
 
         const dailyActivity = new Map<string, DailyActivity>();
-        const files = this.vault.getMarkdownFiles();
+
+        let files: TFile[];
+        try {
+            files = this.vault.getMarkdownFiles();
+        } catch (error) {
+            console.error('Error getting markdown files from vault:', error);
+            throw new Error('Failed to access vault files');
+        }
 
         const endDate = new Date();
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - days);
 
         for (const file of files) {
-            const createdDate = this.getDateString(file.stat.ctime);
-            const modifiedDate = this.getDateString(file.stat.mtime);
+            try {
+                const createdDate = this.getDateString(file.stat.ctime);
+                const modifiedDate = this.getDateString(file.stat.mtime);
 
-            // Track creation
-            if (this.isInRange(file.stat.ctime, startDate, endDate)) {
-                if (!dailyActivity.has(createdDate)) {
-                    dailyActivity.set(createdDate, {
-                        created: new Set(),
-                        modified: new Set()
-                    });
+                // Track creation
+                if (this.isInRange(file.stat.ctime, startDate, endDate)) {
+                    if (!dailyActivity.has(createdDate)) {
+                        dailyActivity.set(createdDate, {
+                            created: new Set(),
+                            modified: new Set()
+                        });
+                    }
+                    dailyActivity.get(createdDate)!.created.add(file);
                 }
-                dailyActivity.get(createdDate)!.created.add(file);
-            }
 
-            // Track modification
-            if (this.isInRange(file.stat.mtime, startDate, endDate)) {
-                if (!dailyActivity.has(modifiedDate)) {
-                    dailyActivity.set(modifiedDate, {
-                        created: new Set(),
-                        modified: new Set()
-                    });
+                // Track modification
+                if (this.isInRange(file.stat.mtime, startDate, endDate)) {
+                    if (!dailyActivity.has(modifiedDate)) {
+                        dailyActivity.set(modifiedDate, {
+                            created: new Set(),
+                            modified: new Set()
+                        });
+                    }
+                    dailyActivity.get(modifiedDate)!.modified.add(file);
                 }
-                dailyActivity.get(modifiedDate)!.modified.add(file);
+            } catch (error) {
+                console.error(`Error processing file ${file.path}:`, error);
+                // Continue processing other files
+                continue;
             }
         }
 
@@ -89,8 +102,14 @@ export class DataCollector {
         } else {
             // Calculate current streak going backwards from today
             let checkDate = today;
-            while (activityData.dailyActivity.has(checkDate)) {
-                const activity = activityData.dailyActivity.get(checkDate)!;
+            while (true) {
+                const activity = activityData.dailyActivity.get(checkDate);
+
+                // If no activity on this date, streak is broken
+                if (!activity) {
+                    break;
+                }
+
                 const noteCount = activity.created.size + activity.modified.size;
 
                 if (noteCount >= minNotes) {
@@ -98,17 +117,18 @@ export class DataCollector {
                         currentStart = checkDate;
                     }
                     currentStreak++;
+                    checkDate = this.getPreviousDate(checkDate);
                 } else {
+                    // Activity exists but doesn't meet minNotes threshold
                     break;
                 }
-
-                checkDate = this.getPreviousDate(checkDate);
             }
         }
 
         // Calculate longest streak
         let tempStreak = 0;
         let tempStart: string | null = null;
+        let lastDate: string | null = null;
 
         for (let i = 0; i < sortedDates.length; i++) {
             const date = sortedDates[i];
@@ -116,19 +136,37 @@ export class DataCollector {
             const noteCount = activity.created.size + activity.modified.size;
 
             if (noteCount >= minNotes) {
-                if (tempStreak === 0) {
-                    tempStart = date;
-                }
-                tempStreak++;
+                // Check if this date is consecutive to the last date
+                const isConsecutive = lastDate === null || this.getNextDate(lastDate) === date;
 
-                if (tempStreak > longestStreak) {
-                    longestStreak = tempStreak;
-                    longestStart = tempStart;
-                    longestEnd = date;
+                if (isConsecutive) {
+                    if (tempStreak === 0) {
+                        tempStart = date;
+                    }
+                    tempStreak++;
+                    lastDate = date;
+
+                    if (tempStreak > longestStreak) {
+                        longestStreak = tempStreak;
+                        longestStart = tempStart;
+                        longestEnd = date;
+                    }
+                } else {
+                    // Gap detected, reset the streak
+                    tempStreak = 1;
+                    tempStart = date;
+                    lastDate = date;
+
+                    if (tempStreak > longestStreak) {
+                        longestStreak = tempStreak;
+                        longestStart = tempStart;
+                        longestEnd = date;
+                    }
                 }
             } else {
                 tempStreak = 0;
                 tempStart = null;
+                lastDate = null;
             }
         }
 
@@ -161,6 +199,12 @@ export class DataCollector {
     private getPreviousDate(dateString: string): string {
         const date = new Date(dateString);
         date.setDate(date.getDate() - 1);
+        return this.getDateString(date.getTime());
+    }
+
+    private getNextDate(dateString: string): string {
+        const date = new Date(dateString);
+        date.setDate(date.getDate() + 1);
         return this.getDateString(date.getTime());
     }
 }

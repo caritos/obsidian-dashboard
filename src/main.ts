@@ -4,6 +4,7 @@ import { DashboardView, VIEW_TYPE_DASHBOARD } from './DashboardView';
 import { WidgetRegistry } from './widgets/WidgetRegistry';
 import { ActivityHeatmapWidget } from './widgets/ActivityHeatmapWidget';
 import { StatsWidget } from './widgets/StatsWidget';
+import { DashboardSettingsTab } from './settings/SettingsTab';
 
 export default class DashboardPlugin extends Plugin {
     settings: DashboardSettings;
@@ -45,6 +46,9 @@ export default class DashboardPlugin extends Plugin {
                 this.activateView();
             }
         });
+
+        // Register settings tab
+        this.addSettingTab(new DashboardSettingsTab(this.app, this));
 
         console.log('Dashboard plugin loaded');
     }

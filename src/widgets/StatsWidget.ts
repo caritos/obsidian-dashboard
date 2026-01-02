@@ -1,6 +1,7 @@
 import { Widget } from './Widget';
 import { WidgetSettings } from '../types';
 import { DataCollector } from '../services/DataCollector';
+import { ActivityData } from '../services/types';
 import { App } from 'obsidian';
 
 interface StatsWidgetSettings extends WidgetSettings {
@@ -125,7 +126,7 @@ export class StatsWidget extends Widget {
         }
     }
 
-    private countNotesInLastDays(activityData: any, days: number): number {
+    private countNotesInLastDays(activityData: ActivityData, days: number): number {
         const endDate = new Date();
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - days);
@@ -145,7 +146,7 @@ export class StatsWidget extends Widget {
         return uniqueNotes.size;
     }
 
-    private findBusiestDay(activityData: any): { date: string; count: number } | null {
+    private findBusiestDay(activityData: ActivityData): { date: string; count: number } | null {
         let busiestDate: string | null = null;
         let maxCount = 0;
 

@@ -60,6 +60,10 @@
     stroke-width: 0.5;
 }
 
+.heatmap-cell-clickable {
+    cursor: pointer;
+}
+
 .heatmap-cell:hover {
     opacity: 0.7;
     stroke: var(--text-accent);

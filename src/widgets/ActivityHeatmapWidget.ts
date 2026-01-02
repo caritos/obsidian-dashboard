@@ -54,7 +54,7 @@ export class ActivityHeatmapWidget extends Widget {
         const settings = this.settings as ActivityHeatmapSettings;
 
         try {
-            this.activityData = await this.dataCollector.collectActivityData(settings.days);
+            this.activityData = this.dataCollector.collectActivityData(settings.days);
 
             // Convert to heatmap cells
             const cells: HeatmapCell[] = [];
@@ -85,10 +85,6 @@ export class ActivityHeatmapWidget extends Widget {
                 cells.push({ date: dateString, count });
             }
 
-            console.log(`[Dashboard] Generated ${cells.length} heatmap cells`);
-            const cellsWithActivity = cells.filter(c => c.count > 0);
-            console.log(`[Dashboard] ${cellsWithActivity.length} cells have activity`);
-
             // Render heatmap
             if (!this.containerEl) return;
             const heatmapContainer = this.containerEl.querySelector('.heatmap-container') as HTMLElement;
@@ -112,7 +108,7 @@ export class ActivityHeatmapWidget extends Widget {
         }
     }
 
-    private async onCellClick(date: string) {
+    private onCellClick(date: string) {
         if (!this.activityData) {
             return;
         }

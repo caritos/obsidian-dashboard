@@ -11,7 +11,7 @@ export class DataCollector {
         this.vault = vault;
     }
 
-    async collectActivityData(days: number = 365): Promise<ActivityData> {
+    collectActivityData(days: number = 365): ActivityData {
         // Check cache
         const now = Date.now();
         if (this.cache && (now - this.cacheTime) < this.CACHE_TTL) {
@@ -23,7 +23,6 @@ export class DataCollector {
         let files: TFile[];
         try {
             files = this.vault.getMarkdownFiles();
-            console.log(`[Dashboard] Found ${files.length} markdown files in vault`);
         } catch (error) {
             console.error('Error getting markdown files from vault:', error);
             throw new Error('Failed to access vault files');
@@ -74,9 +73,6 @@ export class DataCollector {
                 end: this.getDateString(endDate.getTime())
             }
         };
-
-        console.log(`[Dashboard] Collected activity for ${dailyActivity.size} days`);
-        console.log(`[Dashboard] Date range: ${activityData.dateRange.start} to ${activityData.dateRange.end}`);
 
         // Update cache
         this.cache = activityData;

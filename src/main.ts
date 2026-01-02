@@ -41,20 +41,17 @@ export default class DashboardPlugin extends Plugin {
         // Register command to open dashboard
         this.addCommand({
             id: 'open-dashboard',
-            name: 'Open Dashboard',
-            callback: () => {
-                this.activateView();
+            name: 'Open dashboard',
+            callback: async () => {
+                await this.activateView();
             }
         });
 
         // Register settings tab
         this.addSettingTab(new DashboardSettingsTab(this.app, this));
-
-        console.log('Dashboard plugin loaded');
     }
 
     onunload() {
-        console.log('Dashboard plugin unloaded');
     }
 
     async activateView() {

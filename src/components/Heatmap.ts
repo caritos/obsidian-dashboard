@@ -103,7 +103,7 @@ export class HeatmapRenderer {
             // Add click handler
             if (onCellClick) {
                 rect.addEventListener('click', () => onCellClick(cell.date));
-                rect.style.cursor = 'pointer';
+                rect.addClass('heatmap-cell-clickable');
             }
 
             // Track month changes (only on first day of week to avoid duplicate labels)

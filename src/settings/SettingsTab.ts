@@ -13,10 +13,14 @@ export class DashboardSettingsTab extends PluginSettingTab {
         const { containerEl } = this;
         containerEl.empty();
 
-        containerEl.createEl('h2', { text: 'Dashboard Settings' });
+        new Setting(containerEl)
+            .setName('Dashboard settings')
+            .setHeading();
 
         // Global Settings
-        containerEl.createEl('h3', { text: 'Global Settings' });
+        new Setting(containerEl)
+            .setName('Global settings')
+            .setHeading();
 
         new Setting(containerEl)
             .setName('Auto-refresh')
@@ -29,7 +33,9 @@ export class DashboardSettingsTab extends PluginSettingTab {
                 }));
 
         // Widget Settings
-        containerEl.createEl('h3', { text: 'Enabled Widgets' });
+        new Setting(containerEl)
+            .setName('Enabled widgets')
+            .setHeading();
 
         new Setting(containerEl)
             .setName('Activity Heatmap')
@@ -70,7 +76,9 @@ export class DashboardSettingsTab extends PluginSettingTab {
                 }));
 
         // Activity Heatmap Settings
-        containerEl.createEl('h3', { text: 'Activity Heatmap Settings' });
+        new Setting(containerEl)
+            .setName('Activity heatmap settings')
+            .setHeading();
 
         new Setting(containerEl)
             .setName('Date range')
@@ -98,7 +106,9 @@ export class DashboardSettingsTab extends PluginSettingTab {
                 }));
 
         // Stats Settings
-        containerEl.createEl('h3', { text: 'Statistics Settings' });
+        new Setting(containerEl)
+            .setName('Statistics settings')
+            .setHeading();
 
         new Setting(containerEl)
             .setName('Streak minimum')

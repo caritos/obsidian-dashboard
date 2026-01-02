@@ -2,7 +2,7 @@ import { Widget } from './Widget';
 import { WidgetSettings } from '../types';
 import { DataCollector } from '../services/DataCollector';
 import { ActivityData } from '../services/types';
-import { App } from 'obsidian';
+import { App, TFile } from 'obsidian';
 
 interface StatsWidgetSettings extends WidgetSettings {
     visibleMetrics: string[];
@@ -51,7 +51,7 @@ export class StatsWidget extends Widget {
 
     async update(): Promise<void> {
         const settings = this.settings as StatsWidgetSettings;
-        const activityData = await this.dataCollector.collectActivityData(365);
+        const activityData = this.dataCollector.collectActivityData(365);
         const streakData = this.dataCollector.calculateStreaks(activityData, settings.streakMinNotes);
 
         // Calculate stats
@@ -115,7 +115,8 @@ export class StatsWidget extends Widget {
         const card = container.createEl('div', { cls: 'stat-card' });
 
         const iconEl = card.createEl('div', { cls: 'stat-icon' });
-        iconEl.innerHTML = this.getIconSvg(icon);
+        const iconContent = iconEl.createEl('span', { cls: 'stat-icon-emoji' });
+        iconContent.textContent = this.getIconEmoji(icon);
 
         const content = card.createEl('div', { cls: 'stat-content' });
         content.createEl('div', { cls: 'stat-label', text: label });
@@ -138,8 +139,8 @@ export class StatsWidget extends Widget {
             const activity = activityData.dailyActivity.get(dateString);
 
             if (activity) {
-                activity.created.forEach((file: any) => uniqueNotes.add(file.path));
-                activity.modified.forEach((file: any) => uniqueNotes.add(file.path));
+                activity.created.forEach((file: TFile) => uniqueNotes.add(file.path));
+                activity.modified.forEach((file: TFile) => uniqueNotes.add(file.path));
             }
         }
 
@@ -173,7 +174,7 @@ export class StatsWidget extends Widget {
         return `${year}-${month}-${day}`;
     }
 
-    private getIconSvg(icon: string): string {
+    private getIconEmoji(icon: string): string {
         // Simple icon placeholders (in production, use actual icon library)
         const icons: Record<string, string> = {
             'file-text': '📄',
@@ -183,6 +184,6 @@ export class StatsWidget extends Widget {
             'calendar-range': '📆',
             'trending-up': '📈'
         };
-        return `<span class="stat-icon-emoji">${icons[icon] || '•'}</span>`;
+        return icons[icon] || '•';
     }
 }

@@ -16,7 +16,7 @@ export default class DashboardPlugin extends Plugin {
 
         // Register widgets
         this.widgetRegistry.register('activity-heatmap', (settings: WidgetSettings) => {
-            return new ActivityHeatmapWidget(this.app.vault, settings as WidgetSettings & {
+            return new ActivityHeatmapWidget(this.app, settings as WidgetSettings & {
                 days: number;
                 countMode: 'unique' | 'total';
                 colorScheme: 'theme-adaptive' | 'github-green' | 'custom';

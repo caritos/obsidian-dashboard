@@ -84,3 +84,35 @@
     fill: var(--interactive-accent);
     opacity: 1;
 }
+
+/* Note List Modal */
+.note-list-section {
+    margin: 20px 0;
+}
+
+.note-list-section h3 {
+    margin: 10px 0;
+    color: var(--text-muted);
+    font-size: 0.9em;
+    text-transform: uppercase;
+}
+
+.note-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.note-list li {
+    padding: 5px 0;
+}
+
+.note-link {
+    color: var(--text-accent);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.note-link:hover {
+    text-decoration: underline;
+}

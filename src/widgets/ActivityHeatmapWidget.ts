@@ -2,7 +2,8 @@ import { Widget } from './Widget';
 import { WidgetSettings } from '../types';
 import { HeatmapRenderer, HeatmapCell } from '../components/Heatmap';
 import { DataCollector } from '../services/DataCollector';
-import { Vault } from 'obsidian';
+import { NoteListModal } from '../components/NoteListModal';
+import { App, Vault, TFile } from 'obsidian';
 
 interface ActivityHeatmapSettings extends WidgetSettings {
     days: number;
@@ -11,14 +12,17 @@ interface ActivityHeatmapSettings extends WidgetSettings {
 }
 
 export class ActivityHeatmapWidget extends Widget {
+    private app: App;
     private vault: Vault;
     private dataCollector: DataCollector;
     private heatmapRenderer: HeatmapRenderer;
+    private activityData: any = null;
 
-    constructor(vault: Vault, settings: ActivityHeatmapSettings) {
+    constructor(app: App, settings: ActivityHeatmapSettings) {
         super(settings);
-        this.vault = vault;
-        this.dataCollector = new DataCollector(vault);
+        this.app = app;
+        this.vault = app.vault;
+        this.dataCollector = new DataCollector(this.vault);
         this.heatmapRenderer = new HeatmapRenderer();
     }
 
@@ -49,7 +53,7 @@ export class ActivityHeatmapWidget extends Widget {
         const settings = this.settings as ActivityHeatmapSettings;
 
         try {
-            const activityData = await this.dataCollector.collectActivityData(settings.days);
+            this.activityData = await this.dataCollector.collectActivityData(settings.days);
 
             // Convert to heatmap cells
             const cells: HeatmapCell[] = [];
@@ -60,7 +64,7 @@ export class ActivityHeatmapWidget extends Widget {
             // Generate all dates in range
             for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
                 const dateString = this.getDateString(d);
-                const activity = activityData.dailyActivity.get(dateString);
+                const activity = this.activityData.dailyActivity.get(dateString);
 
                 let count = 0;
                 if (activity) {
@@ -103,9 +107,18 @@ export class ActivityHeatmapWidget extends Widget {
         }
     }
 
-    private onCellClick(date: string) {
-        console.log('Clicked on date:', date);
-        // TODO: Show modal with notes for this date
+    private async onCellClick(date: string) {
+        const activity = this.activityData.dailyActivity.get(date);
+
+        const created: TFile[] = activity ? Array.from(activity.created) : [];
+        const modified: TFile[] = activity ? Array.from(activity.modified) : [];
+
+        const modal = new NoteListModal(this.app, {
+            date,
+            created,
+            modified
+        });
+        modal.open();
     }
 
     private getDateString(date: Date): string {

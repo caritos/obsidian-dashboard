@@ -35,10 +35,10 @@ export class DashboardSettingsTab extends PluginSettingTab {
             .setName('Activity Heatmap')
             .setDesc('Show note creation/modification heatmap')
             .addToggle(toggle => toggle
-                .setValue(this.plugin.settings.enabledWidgets.contains('activity-heatmap'))
+                .setValue(this.plugin.settings.enabledWidgets.includes('activity-heatmap'))
                 .onChange(async (value) => {
                     if (value) {
-                        if (!this.plugin.settings.enabledWidgets.contains('activity-heatmap')) {
+                        if (!this.plugin.settings.enabledWidgets.includes('activity-heatmap')) {
                             this.plugin.settings.enabledWidgets.push('activity-heatmap');
                         }
                     } else {
@@ -54,10 +54,10 @@ export class DashboardSettingsTab extends PluginSettingTab {
             .setName('Statistics')
             .setDesc('Show vault statistics (streaks, totals, etc.)')
             .addToggle(toggle => toggle
-                .setValue(this.plugin.settings.enabledWidgets.contains('stats'))
+                .setValue(this.plugin.settings.enabledWidgets.includes('stats'))
                 .onChange(async (value) => {
                     if (value) {
-                        if (!this.plugin.settings.enabledWidgets.contains('stats')) {
+                        if (!this.plugin.settings.enabledWidgets.includes('stats')) {
                             this.plugin.settings.enabledWidgets.push('stats');
                         }
                     } else {

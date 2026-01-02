@@ -3,6 +3,7 @@ import { WidgetSettings } from '../types';
 import { HeatmapRenderer, HeatmapCell } from '../components/Heatmap';
 import { DataCollector } from '../services/DataCollector';
 import { NoteListModal } from '../components/NoteListModal';
+import { ActivityData } from '../services/types';
 import { App, Vault, TFile } from 'obsidian';
 
 interface ActivityHeatmapSettings extends WidgetSettings {
@@ -16,7 +17,7 @@ export class ActivityHeatmapWidget extends Widget {
     private vault: Vault;
     private dataCollector: DataCollector;
     private heatmapRenderer: HeatmapRenderer;
-    private activityData: any = null;
+    private activityData: ActivityData | null = null;
 
     constructor(app: App, settings: ActivityHeatmapSettings) {
         super(settings);
@@ -108,6 +109,10 @@ export class ActivityHeatmapWidget extends Widget {
     }
 
     private async onCellClick(date: string) {
+        if (!this.activityData) {
+            return;
+        }
+
         const activity = this.activityData.dailyActivity.get(date);
 
         const created: TFile[] = activity ? Array.from(activity.created) : [];

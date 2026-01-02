@@ -23,47 +23,36 @@ export class NoteListModal extends Modal {
 
         // Created section
         if (this.data.created.length > 0) {
-            const createdSection = contentEl.createEl('div', { cls: 'note-list-section' });
-            createdSection.createEl('h3', { text: `Created (${this.data.created.length})` });
-
-            const createdList = createdSection.createEl('ul', { cls: 'note-list' });
-            for (const file of this.data.created) {
-                const li = createdList.createEl('li');
-                const link = li.createEl('a', {
-                    text: file.basename,
-                    cls: 'note-link'
-                });
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.app.workspace.openLinkText(file.path, '', false);
-                    this.close();
-                });
-            }
+            this.renderNoteSection(contentEl, 'Created', this.data.created);
         }
 
         // Modified section
         if (this.data.modified.length > 0) {
-            const modifiedSection = contentEl.createEl('div', { cls: 'note-list-section' });
-            modifiedSection.createEl('h3', { text: `Modified (${this.data.modified.length})` });
-
-            const modifiedList = modifiedSection.createEl('ul', { cls: 'note-list' });
-            for (const file of this.data.modified) {
-                const li = modifiedList.createEl('li');
-                const link = li.createEl('a', {
-                    text: file.basename,
-                    cls: 'note-link'
-                });
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.app.workspace.openLinkText(file.path, '', false);
-                    this.close();
-                });
-            }
+            this.renderNoteSection(contentEl, 'Modified', this.data.modified);
         }
 
         // No activity message
         if (this.data.created.length === 0 && this.data.modified.length === 0) {
             contentEl.createEl('p', { text: 'No activity on this date.' });
+        }
+    }
+
+    private renderNoteSection(containerEl: HTMLElement, title: string, files: TFile[]) {
+        const section = containerEl.createEl('div', { cls: 'note-list-section' });
+        section.createEl('h3', { text: `${title} (${files.length})` });
+
+        const list = section.createEl('ul', { cls: 'note-list' });
+        for (const file of files) {
+            const li = list.createEl('li');
+            const link = li.createEl('a', {
+                text: file.basename,
+                cls: 'note-link'
+            });
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.app.workspace.openLinkText(file.path, '', false);
+                this.close();
+            });
         }
     }
 

@@ -3,7 +3,7 @@
   "name": "Dashboard",
   "version": "0.1.0",
   "minAppVersion": "0.15.0",
-  "description": "Extensible dashboard for visualizing vault analytics",
+  "description": "Extensible dashboard for visualizing vault analytics.",
   "author": "Eladio Caritos",
   "authorUrl": "http://caritos.com",
   "isDesktopOnly": false

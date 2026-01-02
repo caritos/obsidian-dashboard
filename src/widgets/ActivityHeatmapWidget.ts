@@ -58,7 +58,7 @@ export class ActivityHeatmapWidget extends Widget {
             startDate.setDate(startDate.getDate() - settings.days);
 
             // Generate all dates in range
-            for (let d = new Date(startDate); d < endDate; d.setDate(d.getDate() + 1)) {
+            for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
                 const dateString = this.getDateString(d);
                 const activity = activityData.dailyActivity.get(dateString);
 

@@ -47,44 +47,59 @@ export class ActivityHeatmapWidget extends Widget {
 
     async update(): Promise<void> {
         const settings = this.settings as ActivityHeatmapSettings;
-        const activityData = await this.dataCollector.collectActivityData(settings.days);
 
-        // Convert to heatmap cells
-        const cells: HeatmapCell[] = [];
-        const endDate = new Date();
-        const startDate = new Date();
-        startDate.setDate(startDate.getDate() - settings.days);
+        try {
+            const activityData = await this.dataCollector.collectActivityData(settings.days);
 
-        // Generate all dates in range
-        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-            const dateString = this.getDateString(d);
-            const activity = activityData.dailyActivity.get(dateString);
+            // Convert to heatmap cells
+            const cells: HeatmapCell[] = [];
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - settings.days);
 
-            let count = 0;
-            if (activity) {
-                if (settings.countMode === 'unique') {
-                    // Count unique notes (a note is counted once if created OR modified)
-                    const uniqueFiles = new Set([
-                        ...activity.created,
-                        ...activity.modified
-                    ]);
-                    count = uniqueFiles.size;
-                } else {
-                    // Count total events
-                    count = activity.created.size + activity.modified.size;
+            // Generate all dates in range
+            for (let d = new Date(startDate); d < endDate; d.setDate(d.getDate() + 1)) {
+                const dateString = this.getDateString(d);
+                const activity = activityData.dailyActivity.get(dateString);
+
+                let count = 0;
+                if (activity) {
+                    if (settings.countMode === 'unique') {
+                        // Count unique notes (a note is counted once if created OR modified)
+                        const uniqueFiles = new Set([
+                            ...activity.created,
+                            ...activity.modified
+                        ]);
+                        count = uniqueFiles.size;
+                    } else {
+                        // Count total events
+                        count = activity.created.size + activity.modified.size;
+                    }
                 }
+
+                cells.push({ date: dateString, count });
             }
 
-            cells.push({ date: dateString, count });
-        }
-
-        // Render heatmap
-        if (!this.containerEl) return;
-        const heatmapContainer = this.containerEl.querySelector('.heatmap-container') as HTMLElement;
-        if (heatmapContainer) {
-            this.heatmapRenderer.render(heatmapContainer, cells, (date) => {
-                this.onCellClick(date);
-            });
+            // Render heatmap
+            if (!this.containerEl) return;
+            const heatmapContainer = this.containerEl.querySelector('.heatmap-container') as HTMLElement;
+            if (heatmapContainer) {
+                this.heatmapRenderer.render(heatmapContainer, cells, (date) => {
+                    this.onCellClick(date);
+                });
+            }
+        } catch (error) {
+            console.error('Error collecting activity data:', error);
+            if (this.containerEl) {
+                const heatmapContainer = this.containerEl.querySelector('.heatmap-container') as HTMLElement;
+                if (heatmapContainer) {
+                    heatmapContainer.empty();
+                    heatmapContainer.createEl('p', {
+                        text: 'Error loading activity data. Please try again.',
+                        cls: 'error-message'
+                    });
+                }
+            }
         }
     }
 

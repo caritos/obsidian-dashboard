@@ -63,7 +63,10 @@ export class HeatmapRenderer {
                     height: this.options.cellSize.toString(),
                     class: `heatmap-cell heatmap-level-${level}`,
                     'data-date': cell.date,
-                    'data-count': cell.count.toString()
+                    'data-count': cell.count.toString(),
+                    'role': 'button',
+                    'aria-label': `${cell.date}: ${cell.count} notes`,
+                    'tabindex': '0'
                 }
             });
 

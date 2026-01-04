@@ -5,20 +5,25 @@ import { WidgetRegistry } from './widgets/WidgetRegistry';
 import { ActivityHeatmapWidget } from './widgets/ActivityHeatmapWidget';
 import { StatsWidget } from './widgets/StatsWidget';
 import { DashboardSettingsTab } from './settings/SettingsTab';
+import { DataCollector } from './services/DataCollector';
 
 export default class DashboardPlugin extends Plugin {
     settings: DashboardSettings;
     widgetRegistry: WidgetRegistry;
+    dataCollector: DataCollector;
 
     async onload() {
         await this.loadSettings();
+
+        // Initialize data collector
+        this.dataCollector = new DataCollector(this.app.vault);
 
         // Initialize widget registry
         this.widgetRegistry = new WidgetRegistry();
 
         // Register widgets
         this.widgetRegistry.register('activity-heatmap', (settings: WidgetSettings) => {
-            return new ActivityHeatmapWidget(this.app, settings as WidgetSettings & {
+            return new ActivityHeatmapWidget(this.app, this.dataCollector, settings as WidgetSettings & {
                 days: number;
                 countMode: 'unique' | 'total';
                 colorScheme: 'theme-adaptive' | 'github-green' | 'custom';
@@ -26,7 +31,7 @@ export default class DashboardPlugin extends Plugin {
         });
 
         this.widgetRegistry.register('stats', (settings: WidgetSettings) => {
-            return new StatsWidget(this.app, settings as WidgetSettings & {
+            return new StatsWidget(this.app, this.dataCollector, settings as WidgetSettings & {
                 visibleMetrics: string[];
                 streakMinNotes: number;
             });
@@ -44,6 +49,23 @@ export default class DashboardPlugin extends Plugin {
             name: 'Open dashboard',
             callback: async () => {
                 await this.activateView();
+            }
+        });
+
+        // Register force refresh command
+        this.addCommand({
+            id: 'force-refresh-dashboard',
+            name: 'Force refresh dashboard',
+            checkCallback: (checking: boolean) => {
+                const dashboardView = this.getDashboardView();
+                if (dashboardView) {
+                    if (!checking) {
+                        this.dataCollector.invalidateCache();
+                        dashboardView.refresh();
+                    }
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -73,6 +95,14 @@ export default class DashboardPlugin extends Plugin {
         }
 
         workspace.revealLeaf(leaf);
+    }
+
+    getDashboardView(): DashboardView | null {
+        const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_DASHBOARD);
+        if (leaves.length > 0) {
+            return leaves[0].view as DashboardView;
+        }
+        return null;
     }
 
     async loadSettings() {

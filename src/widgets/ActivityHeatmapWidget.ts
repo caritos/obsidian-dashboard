@@ -4,7 +4,7 @@ import { HeatmapRenderer, HeatmapCell } from '../components/Heatmap';
 import { DataCollector } from '../services/DataCollector';
 import { NoteListModal } from '../components/NoteListModal';
 import { ActivityData } from '../services/types';
-import { App, Vault, TFile } from 'obsidian';
+import { App, TFile } from 'obsidian';
 
 interface ActivityHeatmapSettings extends WidgetSettings {
     days: number;
@@ -14,16 +14,12 @@ interface ActivityHeatmapSettings extends WidgetSettings {
 
 export class ActivityHeatmapWidget extends Widget {
     private app: App;
-    private vault: Vault;
-    private dataCollector: DataCollector;
     private heatmapRenderer: HeatmapRenderer;
     private activityData: ActivityData | null = null;
 
-    constructor(app: App, settings: ActivityHeatmapSettings) {
-        super(settings);
+    constructor(app: App, dataCollector: DataCollector, settings: ActivityHeatmapSettings) {
+        super(dataCollector, settings);
         this.app = app;
-        this.vault = app.vault;
-        this.dataCollector = new DataCollector(this.vault);
         this.heatmapRenderer = new HeatmapRenderer();
     }
 

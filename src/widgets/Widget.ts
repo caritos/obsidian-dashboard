@@ -1,10 +1,13 @@
 import { WidgetSettings } from '../types';
+import { DataCollector } from '../services/DataCollector';
 
 export abstract class Widget {
     protected containerEl?: HTMLElement;
     protected settings: WidgetSettings;
+    protected dataCollector: DataCollector;
 
-    constructor(settings: WidgetSettings) {
+    constructor(dataCollector: DataCollector, settings: WidgetSettings) {
+        this.dataCollector = dataCollector;
         this.settings = settings;
     }
 

@@ -20,12 +20,10 @@ interface Stats {
 
 export class StatsWidget extends Widget {
     private app: App;
-    private dataCollector: DataCollector;
 
-    constructor(app: App, settings: StatsWidgetSettings) {
-        super(settings);
+    constructor(app: App, dataCollector: DataCollector, settings: StatsWidgetSettings) {
+        super(dataCollector, settings);
         this.app = app;
-        this.dataCollector = new DataCollector(app.vault);
     }
 
     getId(): string {

@@ -46,7 +46,7 @@ export class ActivityHeatmapWidget extends Widget {
         heatmapContainer.createEl('p', { text: 'Loading activity data...' });
     }
 
-    async update(): Promise<void> {
+    update(): Promise<void> {
         const settings = this.settings as ActivityHeatmapSettings;
 
         try {
@@ -82,13 +82,14 @@ export class ActivityHeatmapWidget extends Widget {
             }
 
             // Render heatmap
-            if (!this.containerEl) return;
+            if (!this.containerEl) return Promise.resolve();
             const heatmapContainer = this.containerEl.querySelector('.heatmap-container') as HTMLElement;
             if (heatmapContainer) {
                 this.heatmapRenderer.render(heatmapContainer, cells, (date) => {
                     this.onCellClick(date);
                 });
             }
+            return Promise.resolve();
         } catch (error) {
             console.error('Error collecting activity data:', error);
             if (this.containerEl) {
@@ -101,6 +102,7 @@ export class ActivityHeatmapWidget extends Widget {
                     });
                 }
             }
+            return Promise.reject(error);
         }
     }
 

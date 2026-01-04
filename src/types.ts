@@ -6,7 +6,7 @@ export interface DashboardSettings {
 }
 
 export interface WidgetSettings {
-    [key: string]: any;
+    [key: string]: string | number | boolean | string[] | number[];
 }
 
 export const DEFAULT_SETTINGS: DashboardSettings = {

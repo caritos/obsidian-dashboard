@@ -63,7 +63,7 @@ export class DashboardView extends ItemView {
         }
     }
 
-    async onClose() {
+    onClose() {
         // Cleanup widgets
         for (const widget of this.activeWidgets) {
             widget.destroy();

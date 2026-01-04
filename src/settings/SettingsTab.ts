@@ -13,13 +13,9 @@ export class DashboardSettingsTab extends PluginSettingTab {
         const { containerEl } = this;
         containerEl.empty();
 
-        new Setting(containerEl)
-            .setName('Dashboard settings')
-            .setHeading();
-
         // Global Settings
         new Setting(containerEl)
-            .setName('Global settings')
+            .setName('General')
             .setHeading();
 
         new Setting(containerEl)
@@ -77,7 +73,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
 
         // Activity Heatmap Settings
         new Setting(containerEl)
-            .setName('Activity heatmap settings')
+            .setName('Activity heatmap')
             .setHeading();
 
         new Setting(containerEl)
@@ -107,7 +103,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
 
         // Stats Settings
         new Setting(containerEl)
-            .setName('Statistics settings')
+            .setName('Statistics')
             .setHeading();
 
         new Setting(containerEl)

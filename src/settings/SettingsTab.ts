@@ -15,11 +15,11 @@ export class DashboardSettingsTab extends PluginSettingTab {
 
         // Global Settings
         new Setting(containerEl)
-            .setName('General')
+            .setName('Dashboard settings')
             .setHeading();
 
         new Setting(containerEl)
-            .setName('Auto-refresh')
+            .setName('Auto refresh')
             .setDesc('Automatically refresh dashboard when vault changes')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.autoRefresh)
@@ -95,7 +95,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
             .addDropdown(dropdown => dropdown
                 .addOption('unique', 'Unique notes per day')
                 .addOption('total', 'Total events (creation + modification)')
-                .setValue(this.plugin.settings.widgetSettings['activity-heatmap'].countMode)
+                .setValue(this.plugin.settings.widgetSettings['activity-heatmap'].countMode as string)
                 .onChange(async (value) => {
                     this.plugin.settings.widgetSettings['activity-heatmap'].countMode = value;
                     await this.plugin.saveSettings();

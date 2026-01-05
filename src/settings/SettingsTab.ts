@@ -13,11 +13,6 @@ export class DashboardSettingsTab extends PluginSettingTab {
         const { containerEl } = this;
         containerEl.empty();
 
-        // Global Settings
-        new Setting(containerEl)
-            .setName('Dashboard settings')
-            .setHeading();
-
         new Setting(containerEl)
             .setName('Auto refresh')
             .setDesc('Automatically refresh dashboard when vault changes')
@@ -34,7 +29,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
             .setHeading();
 
         new Setting(containerEl)
-            .setName('Activity Heatmap')
+            .setName('Activity heatmap')
             .setDesc('Show note creation/modification heatmap')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.enabledWidgets.includes('activity-heatmap'))

@@ -50,7 +50,7 @@ export class NoteListModal extends Modal {
             });
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                this.app.workspace.openLinkText(file.path, '', false);
+                void this.app.workspace.openLinkText(file.path, '', false);
                 this.close();
             });
         }

@@ -46,7 +46,7 @@ export default class DashboardPlugin extends Plugin {
         // Register command to open dashboard
         this.addCommand({
             id: 'open',
-            name: 'Open dashboard',
+            name: 'Open',
             callback: async () => {
                 await this.activateView();
             }
@@ -55,7 +55,7 @@ export default class DashboardPlugin extends Plugin {
         // Register force refresh command
         this.addCommand({
             id: 'force-refresh',
-            name: 'Force refresh dashboard',
+            name: 'Force refresh',
             checkCallback: (checking: boolean) => {
                 const dashboardView = this.getDashboardView();
                 if (dashboardView) {
@@ -94,7 +94,7 @@ export default class DashboardPlugin extends Plugin {
             });
         }
 
-        workspace.revealLeaf(leaf);
+        await workspace.revealLeaf(leaf);
     }
 
     getDashboardView(): DashboardView | null {

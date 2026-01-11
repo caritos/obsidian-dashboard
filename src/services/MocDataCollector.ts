@@ -132,15 +132,99 @@ export class MocDataCollector {
     }
 
     /**
-     * Placeholder for calculating trending scores
-     * Will be implemented in next step
+     * Calculates trending scores for MOCs based on activity and backlinks
      */
     private calculateTrendingScores(
         references: MocReference[],
         settings: MocTrendingSettings,
         category: MocCategory
     ): MocTrendingData[] {
-        return [];
+        // Group references by MOC name
+        const mocMap = new Map<string, MocReference[]>();
+
+        for (const ref of references) {
+            if (!mocMap.has(ref.mocName)) {
+                mocMap.set(ref.mocName, []);
+            }
+            mocMap.get(ref.mocName)!.push(ref);
+        }
+
+        // Calculate scores for each MOC
+        const trendingData: MocTrendingData[] = [];
+        const now = Date.now();
+        const timeWindowMs = settings.timeWindow * 24 * 60 * 60 * 1000;
+        const cutoffTime = now - timeWindowMs;
+
+        for (const [mocName, refs] of mocMap.entries()) {
+            // Calculate activity score (notes with recent creates/modifies)
+            const recentlyActiveNotes = new Set<TFile>();
+            for (const ref of refs) {
+                const file = ref.sourceFile;
+                const hasRecentActivity =
+                    file.stat.ctime >= cutoffTime ||
+                    file.stat.mtime >= cutoffTime;
+
+                if (hasRecentActivity) {
+                    recentlyActiveNotes.add(file);
+                }
+            }
+            const activityScore = recentlyActiveNotes.size;
+
+            // Calculate backlink score (new notes created in time window)
+            const newBacklinks = refs.filter(ref => ref.isNewNote);
+            const backlinkScore = newBacklinks.length;
+
+            // Calculate weighted trending score
+            const { activityWeight, newBacklinkWeight } = settings.scoreWeighting;
+            const score = (activityScore * activityWeight) + (backlinkScore * newBacklinkWeight);
+
+            // Skip MOCs with zero score
+            if (score === 0) continue;
+
+            // Find MOC file
+            const mocFile = this.findMocFile(mocName, category, settings);
+
+            trendingData.push({
+                category,
+                mocName,
+                mocFile,
+                score,
+                recentlyLinkedNotes: Array.from(recentlyActiveNotes),
+                recentActivityCount: activityScore,
+                newBacklinksCount: backlinkScore
+            });
+        }
+
+        return trendingData;
+    }
+
+    /**
+     * Finds the MOC file for a given name and category
+     */
+    private findMocFile(mocName: string, category: MocCategory, settings: MocTrendingSettings): TFile | null {
+        const categoryDirMap = {
+            'what': 'what (%)',
+            'where': 'where (+)',
+            'who': 'who (~)'
+        };
+
+        const categoryDir = categoryDirMap[category];
+        const prefix = category === 'what' ? '%' : category === 'where' ? '+' : '~';
+
+        // Try different filename patterns
+        const patterns = [
+            `${settings.mocBasePath}/${categoryDir}/${prefix}${mocName}.md`,
+            `${settings.mocBasePath}/${categoryDir}/${mocName}.md`
+        ];
+
+        for (const pattern of patterns) {
+            const file = this.vault.getAbstractFileByPath(pattern);
+            if (file instanceof TFile) {
+                return file;
+            }
+        }
+
+        return null;
     }
 
     invalidateCache() {

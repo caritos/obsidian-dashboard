@@ -10,8 +10,8 @@ export interface WidgetSettings {
 }
 
 export const DEFAULT_SETTINGS: DashboardSettings = {
-    enabledWidgets: ['activity-heatmap', 'stats', 'moc-breakdown'],
-    widgetOrder: ['activity-heatmap', 'stats', 'moc-breakdown'],
+    enabledWidgets: ['activity-heatmap', 'stats', 'moc-trending'],
+    widgetOrder: ['activity-heatmap', 'stats', 'moc-trending'],
     autoRefresh: true,
     widgetSettings: {
         'activity-heatmap': {
@@ -23,10 +23,15 @@ export const DEFAULT_SETTINGS: DashboardSettings = {
             visibleMetrics: ['total', 'currentStreak', 'longestStreak', 'thisWeek', 'thisMonth', 'busiestDay'],
             streakMinNotes: 1
         },
-        'moc-breakdown': {
-            chartType: 'pie',
-            categoriesCount: 10,
-            excludedFolders: []
+        'moc-trending': {
+            timeWindow: 7,
+            maxMocsPerCategory: 5,
+            scoreWeighting: {
+                activityWeight: 0.7,
+                newBacklinkWeight: 0.3
+            },
+            mocBasePath: 'moc',
+            resourcesPath: 'resources'
         }
     }
 };

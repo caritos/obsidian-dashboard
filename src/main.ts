@@ -6,6 +6,8 @@ import { ActivityHeatmapWidget } from './widgets/ActivityHeatmapWidget';
 import { StatsWidget } from './widgets/StatsWidget';
 import { DashboardSettingsTab } from './settings/SettingsTab';
 import { DataCollector } from './services/DataCollector';
+import { MocDataCollector } from './services/MocDataCollector';
+import { MocTrendingWidget } from './widgets/MocTrendingWidget';
 
 export default class DashboardPlugin extends Plugin {
     settings: DashboardSettings;
@@ -35,6 +37,12 @@ export default class DashboardPlugin extends Plugin {
                 visibleMetrics: string[];
                 streakMinNotes: number;
             });
+        });
+
+        // Register MOC Trending Widget
+        this.widgetRegistry.register('moc-trending', (settings: WidgetSettings) => {
+            const mocDataCollector = new MocDataCollector(this.app.vault, this.app.metadataCache);
+            return new MocTrendingWidget(this.app, mocDataCollector, settings);
         });
 
         // Register view

@@ -1,7 +1,17 @@
-import { TFile, Vault, MetadataCache } from 'obsidian';
+import { TFile, Vault, MetadataCache, normalizePath } from 'obsidian';
 import { MocTrendingData, MocTrendingSettings, MocReference, MocCategory } from './MocTypes';
 import { FrontmatterParser } from './FrontmatterParser';
 
+/**
+ * Collects and processes MOC (Map of Content) trending data from vault resources.
+ *
+ * This class scans the resources directory for markdown files containing MOC references
+ * in their frontmatter (who/what/where fields), calculates trending scores based on
+ * reference frequency and recency, and provides cached results for performance.
+ *
+ * The collector uses a time-based cache (1-minute TTL) to avoid redundant vault scans
+ * and provides separate trending data for each MOC category (what, where, who).
+ */
 export class MocDataCollector {
     private vault: Vault;
     private metadataCache: MetadataCache;
@@ -54,48 +64,67 @@ export class MocDataCollector {
      */
     private async scanResourcesDirectory(settings: MocTrendingSettings): Promise<MocReference[]> {
         const references: MocReference[] = [];
-        const files = this.vault.getMarkdownFiles();
+
+        let files: TFile[];
+        try {
+            files = this.vault.getMarkdownFiles();
+        } catch (error) {
+            console.error('Error getting markdown files from vault:', error);
+            throw new Error('Failed to access vault files');
+        }
 
         // Calculate time window
         const now = Date.now();
         const timeWindowMs = settings.timeWindow * 24 * 60 * 60 * 1000;
         const cutoffTime = now - timeWindowMs;
 
+        // Normalize the resources path for cross-platform compatibility
+        const normalizedResourcesPath = normalizePath(settings.resourcesPath);
+
         for (const file of files) {
-            // Only process files in resources directory
-            if (!file.path.startsWith(settings.resourcesPath + '/')) {
-                continue;
-            }
-
-            // Get frontmatter
-            const cache = this.metadataCache.getFileCache(file);
-            if (!cache || !cache.frontmatter) {
-                continue;
-            }
-
-            const frontmatter = cache.frontmatter;
-            const isNewNote = file.stat.ctime >= cutoffTime;
-
-            // Extract MOC references from who/what/where fields
-            const fields: { field: string; category: MocCategory }[] = [
-                { field: 'who', category: 'who' },
-                { field: 'what', category: 'what' },
-                { field: 'where', category: 'where' }
-            ];
-
-            for (const { field, category } of fields) {
-                const wikilinks = FrontmatterParser.extractWikilinks(frontmatter[field]);
-
-                for (const wikilink of wikilinks) {
-                    const mocName = FrontmatterParser.stripMocPrefix(wikilink);
-
-                    references.push({
-                        mocName,
-                        category,
-                        sourceFile: file,
-                        isNewNote
-                    });
+            try {
+                // Only process files in resources directory
+                // Normalize both paths for cross-platform comparison
+                const normalizedFilePath = normalizePath(file.path);
+                if (!normalizedFilePath.startsWith(normalizedResourcesPath + '/') &&
+                    normalizedFilePath !== normalizedResourcesPath) {
+                    continue;
                 }
+
+                // Get frontmatter
+                const cache = this.metadataCache.getFileCache(file);
+                if (!cache || !cache.frontmatter) {
+                    continue;
+                }
+
+                const frontmatter = cache.frontmatter;
+                const isNewNote = file.stat.ctime >= cutoffTime;
+
+                // Extract MOC references from who/what/where fields
+                const fields: { field: string; category: MocCategory }[] = [
+                    { field: 'who', category: 'who' },
+                    { field: 'what', category: 'what' },
+                    { field: 'where', category: 'where' }
+                ];
+
+                for (const { field, category } of fields) {
+                    const wikilinks = FrontmatterParser.extractWikilinks(frontmatter[field]);
+
+                    for (const wikilink of wikilinks) {
+                        const mocName = FrontmatterParser.stripMocPrefix(wikilink);
+
+                        references.push({
+                            mocName,
+                            category,
+                            sourceFile: file,
+                            isNewNote
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error(`Error processing file ${file.path}:`, error);
+                // Continue processing other files
+                continue;
             }
         }
 

@@ -213,8 +213,8 @@ export class MocDataCollector {
 
         // Try different filename patterns
         const patterns = [
-            `${settings.mocBasePath}/${categoryDir}/${prefix}${mocName}.md`,
-            `${settings.mocBasePath}/${categoryDir}/${mocName}.md`
+            normalizePath(`${settings.mocBasePath}/${categoryDir}/${prefix}${mocName}.md`),
+            normalizePath(`${settings.mocBasePath}/${categoryDir}/${mocName}.md`)
         ];
 
         for (const pattern of patterns) {

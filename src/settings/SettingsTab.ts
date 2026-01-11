@@ -75,6 +75,25 @@ export class DashboardSettingsTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                 }));
 
+        new Setting(containerEl)
+            .setName('MOC Trending')
+            .setDesc('Show trending MOCs (Maps of Content) by category')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.enabledWidgets.includes('moc-trending'))
+                .onChange(async (value) => {
+                    if (value) {
+                        if (!this.plugin.settings.enabledWidgets.includes('moc-trending')) {
+                            this.plugin.settings.enabledWidgets.push('moc-trending');
+                        }
+                    } else {
+                        const index = this.plugin.settings.enabledWidgets.indexOf('moc-trending');
+                        if (index > -1) {
+                            this.plugin.settings.enabledWidgets.splice(index, 1);
+                        }
+                    }
+                    await this.plugin.saveSettings();
+                }));
+
         // Activity Heatmap Settings
         new Setting(containerEl)
             .setName('Activity heatmap settings')
@@ -122,5 +141,81 @@ export class DashboardSettingsTab extends PluginSettingTab {
                         await this.plugin.saveSettings();
                     }
                 }));
+
+        // MOC Trending Settings
+        if (this.plugin.settings.enabledWidgets.includes('moc-trending')) {
+            containerEl.createEl('h3', { text: 'MOC Trending Settings' });
+
+            const mocSettings = this.plugin.settings.widgetSettings['moc-trending'];
+
+            // Time window setting
+            new Setting(containerEl)
+                .setName('Time window')
+                .setDesc('Number of days to look back for trending activity')
+                .addDropdown(dropdown => dropdown
+                    .addOption('7', '7 days')
+                    .addOption('14', '14 days')
+                    .addOption('30', '30 days')
+                    .addOption('60', '60 days')
+                    .addOption('90', '90 days')
+                    .setValue(String(mocSettings.timeWindow || 7))
+                    .onChange(async (value) => {
+                        mocSettings.timeWindow = parseInt(value);
+                        await this.plugin.saveSettings();
+                    }));
+
+            // Max MOCs per category
+            new Setting(containerEl)
+                .setName('MOCs per category')
+                .setDesc('Maximum number of trending MOCs to show per category')
+                .addSlider(slider => slider
+                    .setLimits(3, 10, 1)
+                    .setValue(mocSettings.maxMocsPerCategory || 5)
+                    .setDynamicTooltip()
+                    .onChange(async (value) => {
+                        mocSettings.maxMocsPerCategory = value;
+                        await this.plugin.saveSettings();
+                    }));
+
+            // Activity weight
+            new Setting(containerEl)
+                .setName('Activity weight')
+                .setDesc('Weight for recent note activity (0.0 - 1.0)')
+                .addSlider(slider => slider
+                    .setLimits(0, 1, 0.1)
+                    .setValue(mocSettings.scoreWeighting?.activityWeight || 0.7)
+                    .setDynamicTooltip()
+                    .onChange(async (value) => {
+                        if (!mocSettings.scoreWeighting) {
+                            mocSettings.scoreWeighting = { activityWeight: 0.7, newBacklinkWeight: 0.3 };
+                        }
+                        mocSettings.scoreWeighting.activityWeight = value;
+                        mocSettings.scoreWeighting.newBacklinkWeight = 1 - value;
+                        await this.plugin.saveSettings();
+                    }));
+
+            // Base paths
+            new Setting(containerEl)
+                .setName('MOC base path')
+                .setDesc('Base directory for MOC files (relative to vault root)')
+                .addText(text => text
+                    .setPlaceholder('moc')
+                    .setValue(mocSettings.mocBasePath || 'moc')
+                    .onChange(async (value) => {
+                        mocSettings.mocBasePath = value;
+                        await this.plugin.saveSettings();
+                    }));
+
+            new Setting(containerEl)
+                .setName('Resources path')
+                .setDesc('Directory containing resource notes (relative to vault root)')
+                .addText(text => text
+                    .setPlaceholder('resources')
+                    .setValue(mocSettings.resourcesPath || 'resources')
+                    .onChange(async (value) => {
+                        mocSettings.resourcesPath = value;
+                        await this.plugin.saveSettings();
+                    }));
+        }
     }
 }

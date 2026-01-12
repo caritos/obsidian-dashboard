@@ -14,16 +14,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
         containerEl.empty();
 
         new Setting(containerEl)
-            .setName('Dashboard settings')
-            .setHeading();
-
-        // Global Settings
-        new Setting(containerEl)
-            .setName('Global settings')
-            .setHeading();
-
-        new Setting(containerEl)
-            .setName('Auto-refresh')
+            .setName('Auto refresh')
             .setDesc('Automatically refresh dashboard when vault changes')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.autoRefresh)
@@ -38,7 +29,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
             .setHeading();
 
         new Setting(containerEl)
-            .setName('Activity Heatmap')
+            .setName('Activity heatmap')
             .setDesc('Show note creation/modification heatmap')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.enabledWidgets.includes('activity-heatmap'))
@@ -77,7 +68,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
 
         // Activity Heatmap Settings
         new Setting(containerEl)
-            .setName('Activity heatmap settings')
+            .setName('Activity heatmap')
             .setHeading();
 
         new Setting(containerEl)
@@ -99,7 +90,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
             .addDropdown(dropdown => dropdown
                 .addOption('unique', 'Unique notes per day')
                 .addOption('total', 'Total events (creation + modification)')
-                .setValue(this.plugin.settings.widgetSettings['activity-heatmap'].countMode)
+                .setValue(this.plugin.settings.widgetSettings['activity-heatmap'].countMode as string)
                 .onChange(async (value) => {
                     this.plugin.settings.widgetSettings['activity-heatmap'].countMode = value;
                     await this.plugin.saveSettings();
@@ -107,7 +98,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
 
         // Stats Settings
         new Setting(containerEl)
-            .setName('Statistics settings')
+            .setName('Statistics')
             .setHeading();
 
         new Setting(containerEl)

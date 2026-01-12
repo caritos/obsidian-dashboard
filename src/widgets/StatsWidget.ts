@@ -47,7 +47,7 @@ export class StatsWidget extends Widget {
         statsContainer.createEl('p', { text: 'Loading statistics...' });
     }
 
-    async update(): Promise<void> {
+    update(): Promise<void> {
         const settings = this.settings as StatsWidgetSettings;
         const activityData = this.dataCollector.collectActivityData(365);
         const streakData = this.dataCollector.calculateStreaks(activityData, settings.streakMinNotes);
@@ -63,7 +63,7 @@ export class StatsWidget extends Widget {
         };
 
         // Render stats
-        if (!this.containerEl) return;
+        if (!this.containerEl) return Promise.resolve();
         const statsContainer = this.containerEl.querySelector('.stats-container') as HTMLElement;
         if (statsContainer) {
             statsContainer.empty();
@@ -101,6 +101,7 @@ export class StatsWidget extends Widget {
                 );
             }
         }
+        return Promise.resolve();
     }
 
     private renderStatCard(

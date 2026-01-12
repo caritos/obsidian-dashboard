@@ -27,7 +27,7 @@ export class MocDataCollector {
     /**
      * Collects trending MOC data for all categories
      */
-    async collectTrendingMocs(settings: MocTrendingSettings): Promise<Map<MocCategory, MocTrendingData[]>> {
+    collectTrendingMocs(settings: MocTrendingSettings): Map<MocCategory, MocTrendingData[]> {
         // Check cache
         const now = Date.now();
         if (this.cache && (now - this.cacheTime) < this.CACHE_TTL) {

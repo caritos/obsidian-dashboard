@@ -41,7 +41,7 @@ export class MocTrendingWidget extends Widget {
         if (!this.containerEl) return;
 
         const settings = this.settings as unknown as MocTrendingSettings;
-        const trendingData = await this.mocDataCollector.collectTrendingMocs(settings);
+        const trendingData = this.mocDataCollector.collectTrendingMocs(settings);
 
         // Render categories
         const content = this.containerEl.querySelector('.moc-trending-container') as HTMLElement;

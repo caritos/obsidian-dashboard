@@ -68,8 +68,8 @@ export class DashboardSettingsTab extends PluginSettingTab {
                 }));
 
         new Setting(containerEl)
-            .setName('MOC Trending')
-            .setDesc('Show trending MOCs (Maps of Content) by category')
+            .setName('MOC trending')
+            .setDesc('Show trending MOCs (maps of content) by category')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.enabledWidgets.includes('moc-trending'))
                 .onChange(async (value) => {
@@ -94,22 +94,26 @@ export class DashboardSettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName('Date range')
             .setDesc('Number of days to display')
-            .addText(text => text
-                .setValue(String(this.plugin.settings.widgetSettings['activity-heatmap']?.days ?? 365))
-                .onChange(async (value) => {
-                    const days = parseInt(value);
-                    if (!isNaN(days) && days > 0) {
-                        this.plugin.settings.widgetSettings['activity-heatmap'].days = days;
-                        await this.plugin.saveSettings();
-                    }
-                }));
+            .addText(text => {
+                const days = this.plugin.settings.widgetSettings['activity-heatmap']?.days;
+                const daysValue = typeof days === 'number' ? days : 365;
+                return text
+                    .setValue(String(daysValue))
+                    .onChange(async (value) => {
+                        const days = parseInt(value);
+                        if (!isNaN(days) && days > 0) {
+                            this.plugin.settings.widgetSettings['activity-heatmap'].days = days;
+                            await this.plugin.saveSettings();
+                        }
+                    });
+            });
 
         new Setting(containerEl)
             .setName('Count mode')
             .setDesc('How to count notes per day')
             .addDropdown(dropdown => dropdown
                 .addOption('unique', 'Unique notes per day')
-                .addOption('total', 'Total events (creation + modification)')
+                .addOption('total', 'Total events (creation and modification)')
                 .setValue(this.plugin.settings.widgetSettings['activity-heatmap'].countMode as string)
                 .onChange(async (value) => {
                     this.plugin.settings.widgetSettings['activity-heatmap'].countMode = value;
@@ -124,20 +128,24 @@ export class DashboardSettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName('Streak minimum')
             .setDesc('Minimum notes per day to count for streaks')
-            .addText(text => text
-                .setValue(String(this.plugin.settings.widgetSettings['stats']?.streakMinNotes ?? 1))
-                .onChange(async (value) => {
-                    const min = parseInt(value);
-                    if (!isNaN(min) && min > 0) {
-                        this.plugin.settings.widgetSettings['stats'].streakMinNotes = min;
-                        await this.plugin.saveSettings();
-                    }
-                }));
+            .addText(text => {
+                const streakMinNotes = this.plugin.settings.widgetSettings['stats']?.streakMinNotes;
+                const minValue = typeof streakMinNotes === 'number' ? streakMinNotes : 1;
+                return text
+                    .setValue(String(minValue))
+                    .onChange(async (value) => {
+                        const min = parseInt(value);
+                        if (!isNaN(min) && min > 0) {
+                            this.plugin.settings.widgetSettings['stats'].streakMinNotes = min;
+                            await this.plugin.saveSettings();
+                        }
+                    });
+            });
 
         // MOC Trending Settings
         if (this.plugin.settings.enabledWidgets.includes('moc-trending')) {
             new Setting(containerEl)
-                .setName('MOC Trending')
+                .setName('MOC trending')
                 .setHeading();
 
             const mocSettings = this.plugin.settings.widgetSettings['moc-trending'] as unknown as MocTrendingSettings;
@@ -174,7 +182,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
             // Activity weight
             new Setting(containerEl)
                 .setName('Activity weight')
-                .setDesc('Weight for recent note activity (0.0 - 1.0)')
+                .setDesc('Weight for recent note activity (0.0 to 1.0)')
                 .addSlider(slider => slider
                     .setLimits(0, 1, 0.1)
                     .setValue(mocSettings.scoreWeighting?.activityWeight || 0.7)

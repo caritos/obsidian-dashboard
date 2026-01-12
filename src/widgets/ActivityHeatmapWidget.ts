@@ -28,7 +28,7 @@ export class ActivityHeatmapWidget extends Widget {
     }
 
     getName(): string {
-        return 'Activity Heatmap';
+        return 'Activity heatmap';
     }
 
     render(containerEl: HTMLElement): void {
@@ -50,7 +50,7 @@ export class ActivityHeatmapWidget extends Widget {
         const settings = this.settings as ActivityHeatmapSettings;
 
         try {
-            this.activityData = this.dataCollector.collectActivityData(settings.days);
+            this.activityData = this.dataCollector!.collectActivityData(settings.days);
 
             // Convert to heatmap cells
             const cells: HeatmapCell[] = [];

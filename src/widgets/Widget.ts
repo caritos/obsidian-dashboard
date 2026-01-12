@@ -4,9 +4,9 @@ import { DataCollector } from '../services/DataCollector';
 export abstract class Widget {
     protected containerEl?: HTMLElement;
     protected settings: WidgetSettings;
-    protected dataCollector: DataCollector;
+    protected dataCollector: DataCollector | null;
 
-    constructor(dataCollector: DataCollector, settings: WidgetSettings) {
+    constructor(dataCollector: DataCollector | null, settings: WidgetSettings) {
         this.dataCollector = dataCollector;
         this.settings = settings;
     }

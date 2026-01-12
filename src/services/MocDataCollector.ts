@@ -38,7 +38,7 @@ export class MocDataCollector {
         const result = new Map<MocCategory, MocTrendingData[]>();
 
         // Scan resources directory for MOC references
-        const mocReferences = await this.scanResourcesDirectory(settings);
+        const mocReferences = this.scanResourcesDirectory(settings);
 
         // Build trending data for each category
         for (const category of categories) {
@@ -62,7 +62,7 @@ export class MocDataCollector {
     /**
      * Scans resources directory for MOC references in frontmatter
      */
-    private async scanResourcesDirectory(settings: MocTrendingSettings): Promise<MocReference[]> {
+    private scanResourcesDirectory(settings: MocTrendingSettings): MocReference[] {
         const references: MocReference[] = [];
 
         let files: TFile[];

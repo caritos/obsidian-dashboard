@@ -1,5 +1,6 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import DashboardPlugin from '../main';
+import { MocTrendingSettings } from '../services/MocTypes';
 
 export class DashboardSettingsTab extends PluginSettingTab {
     plugin: DashboardPlugin;
@@ -94,7 +95,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
             .setName('Date range')
             .setDesc('Number of days to display')
             .addText(text => text
-                .setValue(this.plugin.settings.widgetSettings['activity-heatmap'].days.toString())
+                .setValue(String(this.plugin.settings.widgetSettings['activity-heatmap']?.days ?? 365))
                 .onChange(async (value) => {
                     const days = parseInt(value);
                     if (!isNaN(days) && days > 0) {
@@ -124,7 +125,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
             .setName('Streak minimum')
             .setDesc('Minimum notes per day to count for streaks')
             .addText(text => text
-                .setValue(this.plugin.settings.widgetSettings['stats'].streakMinNotes.toString())
+                .setValue(String(this.plugin.settings.widgetSettings['stats']?.streakMinNotes ?? 1))
                 .onChange(async (value) => {
                     const min = parseInt(value);
                     if (!isNaN(min) && min > 0) {
@@ -135,9 +136,11 @@ export class DashboardSettingsTab extends PluginSettingTab {
 
         // MOC Trending Settings
         if (this.plugin.settings.enabledWidgets.includes('moc-trending')) {
-            containerEl.createEl('h3', { text: 'MOC Trending Settings' });
+            new Setting(containerEl)
+                .setName('MOC Trending')
+                .setHeading();
 
-            const mocSettings = this.plugin.settings.widgetSettings['moc-trending'] as any;
+            const mocSettings = this.plugin.settings.widgetSettings['moc-trending'] as unknown as MocTrendingSettings;
 
             // Time window setting
             new Setting(containerEl)

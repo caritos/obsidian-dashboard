@@ -6,7 +6,7 @@ export interface DashboardSettings {
 }
 
 export interface WidgetSettings {
-    [key: string]: string | number | boolean | string[] | number[] | Record<string, any>;
+    [key: string]: string | number | boolean | string[] | number[] | Record<string, string | number | boolean>;
 }
 
 export const DEFAULT_SETTINGS: DashboardSettings = {

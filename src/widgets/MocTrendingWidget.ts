@@ -10,8 +10,8 @@ export class MocTrendingWidget extends Widget {
     private mocDataCollector: MocDataCollector;
 
     constructor(app: App, mocDataCollector: MocDataCollector, settings: WidgetSettings) {
-        // Pass a dummy DataCollector since we're using MocDataCollector instead
-        super(null as any, settings);
+        // Pass null for DataCollector since we're using MocDataCollector instead
+        super(null, settings);
         this.app = app;
         this.mocDataCollector = mocDataCollector;
     }
@@ -40,7 +40,7 @@ export class MocTrendingWidget extends Widget {
     async update(): Promise<void> {
         if (!this.containerEl) return;
 
-        const settings = this.settings as any as MocTrendingSettings;
+        const settings = this.settings as unknown as MocTrendingSettings;
         const trendingData = await this.mocDataCollector.collectTrendingMocs(settings);
 
         // Render categories
@@ -72,7 +72,7 @@ export class MocTrendingWidget extends Widget {
         const item = container.createEl('div', { cls: 'moc-trending-item' });
 
         // Rank
-        const rankEl = item.createEl('span', { cls: 'moc-trending-rank', text: `${rank}.` });
+        item.createEl('span', { cls: 'moc-trending-rank', text: `${rank}.` });
 
         // MOC name (clickable)
         const nameEl = item.createEl('a', {
@@ -83,7 +83,7 @@ export class MocTrendingWidget extends Widget {
         if (moc.mocFile) {
             nameEl.addEventListener('click', (e) => {
                 e.preventDefault();
-                this.app.workspace.openLinkText(moc.mocFile!.path, '', false);
+                void this.app.workspace.openLinkText(moc.mocFile!.path, '', false);
             });
         } else {
             nameEl.addClass('moc-trending-missing');
@@ -118,7 +118,7 @@ export class MocTrendingWidget extends Widget {
             e.stopPropagation();
             const newNotes = moc.recentlyLinkedNotes.filter(file => {
                 const now = Date.now();
-                const settings = this.settings as any as MocTrendingSettings;
+                const settings = this.settings as unknown as MocTrendingSettings;
                 const timeWindowMs = settings.timeWindow * 24 * 60 * 60 * 1000;
                 return file.stat.ctime >= (now - timeWindowMs);
             });

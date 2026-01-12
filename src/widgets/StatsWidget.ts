@@ -49,8 +49,8 @@ export class StatsWidget extends Widget {
 
     update(): Promise<void> {
         const settings = this.settings as StatsWidgetSettings;
-        const activityData = this.dataCollector.collectActivityData(365);
-        const streakData = this.dataCollector.calculateStreaks(activityData, settings.streakMinNotes);
+        const activityData = this.dataCollector!.collectActivityData(365);
+        const streakData = this.dataCollector!.calculateStreaks(activityData, settings.streakMinNotes);
 
         // Calculate stats
         const stats: Stats = {

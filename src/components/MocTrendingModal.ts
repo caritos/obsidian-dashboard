@@ -35,7 +35,7 @@ export class MocTrendingModal extends Modal {
             });
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                this.app.workspace.openLinkText(note.path, '', false);
+                void this.app.workspace.openLinkText(note.path, '', false);
                 this.close();
             });
 

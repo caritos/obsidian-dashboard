@@ -54,7 +54,7 @@ export default class DashboardPlugin extends Plugin {
         // Register command to open dashboard
         this.addCommand({
             id: 'open',
-            name: 'Open',
+            name: 'Open dashboard',
             callback: async () => {
                 await this.activateView();
             }
@@ -63,7 +63,7 @@ export default class DashboardPlugin extends Plugin {
         // Register force refresh command
         this.addCommand({
             id: 'force-refresh',
-            name: 'Force refresh',
+            name: 'Force refresh dashboard',
             checkCallback: (checking: boolean) => {
                 const dashboardView = this.getDashboardView();
                 if (dashboardView) {

@@ -9,7 +9,7 @@ This is an **Obsidian plugin** that provides an extensible dashboard for visuali
 **Key Features:**
 - Activity Heatmap (GitHub-style contribution graph)
 - Stats Widget (streaks, totals, busiest days)
-- MOC Breakdown (planned, not yet implemented)
+- MOC Trending (trending topics, people, and locations based on vault activity)
 
 **Plugin ID:** `dashboard`
 **Repository:** https://github.com/caritos/obsidian-dashboard
@@ -52,7 +52,7 @@ The plugin uses a **factory pattern with a centralized registry** for extensibil
 3. **Built-in Widgets:**
    - `ActivityHeatmapWidget` (src/widgets/ActivityHeatmapWidget.ts): 365-day heatmap
    - `StatsWidget` (src/widgets/StatsWidget.ts): Key metrics display
-   - `moc-breakdown`: Referenced in settings but not implemented
+   - `MocTrendingWidget` (src/widgets/MocTrendingWidget.ts): Trending MOCs display
 
 ### Plugin Lifecycle
 
@@ -94,6 +94,15 @@ scan vault files → cache results (1-min TTL) → return ActivityData
 - Builds `ActivityData` with daily activity (created/modified notes)
 - Calculates streaks with configurable minimum notes threshold
 - **Caching:** 1-minute TTL to avoid re-scanning on every widget update
+
+**MocDataCollector** (`src/services/MocDataCollector.ts`):
+- Scans resources directory for MOC references in frontmatter
+- Calculates trending scores based on activity and backlinks
+- Caching: 1-minute TTL (same as ActivityData)
+
+**FrontmatterParser** (`src/services/FrontmatterParser.ts`):
+- Utility for parsing YAML frontmatter
+- Extracts wikilinks and MOC category prefixes
 
 **Settings** (`src/types.ts`, `src/settings/SettingsTab.ts`):
 - `DashboardSettings`: enabled widgets, widget order, auto-refresh, per-widget settings
@@ -149,9 +158,7 @@ src/
 - Use `TFile` for file references (has `stat.ctime`, `stat.mtime`)
 
 ### Known Limitations
-- MOC Breakdown widget is in settings but not implemented
 - Debug console.log statements present in DataCollector.ts and ActivityHeatmapWidget.ts
-- Settings shows warning for missing `moc-breakdown` widget (expected until implemented)
 
 ### Settings Persistence
 - Settings stored via `this.loadData()` / `this.saveData()` (Obsidian API)

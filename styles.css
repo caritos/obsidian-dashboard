@@ -193,3 +193,129 @@
     color: var(--text-muted);
     margin-top: 2px;
 }
+
+/* MOC Trending Widget */
+.moc-trending-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.moc-trending-category {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.moc-trending-category-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-muted);
+}
+
+.moc-trending-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.moc-trending-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: var(--background-secondary);
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.moc-trending-item:hover {
+    background: var(--background-modifier-hover);
+}
+
+.moc-trending-rank {
+    font-weight: 600;
+    color: var(--text-muted);
+    min-width: 1.5rem;
+}
+
+.moc-trending-name {
+    flex: 1;
+    cursor: pointer;
+    color: var(--text-normal);
+    text-decoration: none;
+}
+
+.moc-trending-name:hover {
+    color: var(--text-accent);
+    text-decoration: underline;
+}
+
+.moc-trending-name.moc-trending-missing {
+    color: var(--text-faint);
+    font-style: italic;
+    cursor: default;
+}
+
+.moc-trending-name.moc-trending-missing:hover {
+    text-decoration: none;
+}
+
+.moc-trending-metrics {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.moc-trending-metric {
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    background: var(--background-primary);
+    transition: background 0.2s;
+}
+
+.moc-trending-metric:hover {
+    background: var(--background-modifier-hover);
+}
+
+/* MOC Trending Modal */
+.moc-trending-note-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.moc-trending-note-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background: var(--background-secondary);
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.moc-trending-note-item:hover {
+    background: var(--background-modifier-hover);
+}
+
+.moc-trending-note-link {
+    flex: 1;
+    cursor: pointer;
+    color: var(--text-normal);
+    text-decoration: none;
+}
+
+.moc-trending-note-link:hover {
+    color: var(--text-accent);
+    text-decoration: underline;
+}
+
+.moc-trending-note-time {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}

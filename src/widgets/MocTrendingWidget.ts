@@ -40,7 +40,7 @@ export class MocTrendingWidget extends Widget {
     async update(): Promise<void> {
         if (!this.containerEl) return;
 
-        const settings = this.settings as MocTrendingSettings;
+        const settings = this.settings as any as MocTrendingSettings;
         const trendingData = await this.mocDataCollector.collectTrendingMocs(settings);
 
         // Render categories
@@ -118,7 +118,7 @@ export class MocTrendingWidget extends Widget {
             e.stopPropagation();
             const newNotes = moc.recentlyLinkedNotes.filter(file => {
                 const now = Date.now();
-                const settings = this.settings as MocTrendingSettings;
+                const settings = this.settings as any as MocTrendingSettings;
                 const timeWindowMs = settings.timeWindow * 24 * 60 * 60 * 1000;
                 return file.stat.ctime >= (now - timeWindowMs);
             });

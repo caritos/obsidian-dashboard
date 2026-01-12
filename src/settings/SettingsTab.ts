@@ -137,7 +137,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
         if (this.plugin.settings.enabledWidgets.includes('moc-trending')) {
             containerEl.createEl('h3', { text: 'MOC Trending Settings' });
 
-            const mocSettings = this.plugin.settings.widgetSettings['moc-trending'];
+            const mocSettings = this.plugin.settings.widgetSettings['moc-trending'] as any;
 
             // Time window setting
             new Setting(containerEl)

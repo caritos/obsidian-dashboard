@@ -34,7 +34,7 @@ export class MocTrendingWidget extends Widget {
 
         // Create content container
         const content = containerEl.createEl('div', { cls: 'moc-trending-container' });
-        content.createEl('p', { text: 'Loading trending MOCs...' });
+        content.createEl('p', { text: 'Loading trending maps of content...' });
     }
 
     update(): Promise<void> {
@@ -89,7 +89,7 @@ export class MocTrendingWidget extends Widget {
             });
         } else {
             nameEl.addClass('moc-trending-missing');
-            nameEl.title = 'MOC file not found';
+            nameEl.title = 'Map of content file not found';
         }
 
         // Metrics container

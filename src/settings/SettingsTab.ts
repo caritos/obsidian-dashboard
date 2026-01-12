@@ -69,7 +69,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('MOC trending')
-            .setDesc('Show trending MOCs (maps of content) by category')
+            .setDesc('Show trending maps of content by category')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.enabledWidgets.includes('moc-trending'))
                 .onChange(async (value) => {
@@ -168,8 +168,8 @@ export class DashboardSettingsTab extends PluginSettingTab {
 
             // Max MOCs per category
             new Setting(containerEl)
-                .setName('MOCs per category')
-                .setDesc('Maximum number of trending MOCs to show per category')
+                .setName('Maps of content per category')
+                .setDesc('Maximum number of trending maps of content to show per category')
                 .addSlider(slider => slider
                     .setLimits(3, 10, 1)
                     .setValue(mocSettings.maxMocsPerCategory || 5)
@@ -198,8 +198,8 @@ export class DashboardSettingsTab extends PluginSettingTab {
 
             // Base paths
             new Setting(containerEl)
-                .setName('MOC base path')
-                .setDesc('Base directory for MOC files (relative to vault root)')
+                .setName('Map of content base path')
+                .setDesc('Base directory for map of content files (relative to vault root)')
                 .addText(text => text
                     .setPlaceholder('moc')
                     .setValue(mocSettings.mocBasePath || 'moc')

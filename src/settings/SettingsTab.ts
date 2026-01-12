@@ -68,7 +68,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
                 }));
 
         new Setting(containerEl)
-            .setName('MOC trending')
+            .setName('Trending maps of content')
             .setDesc('Show trending maps of content by category')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.enabledWidgets.includes('moc-trending'))
@@ -145,7 +145,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
         // MOC Trending Settings
         if (this.plugin.settings.enabledWidgets.includes('moc-trending')) {
             new Setting(containerEl)
-                .setName('MOC trending')
+                .setName('Trending maps of content')
                 .setHeading();
 
             const mocSettings = this.plugin.settings.widgetSettings['moc-trending'] as unknown as MocTrendingSettings;
@@ -201,7 +201,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
                 .setName('Map of content base path')
                 .setDesc('Base directory for map of content files (relative to vault root)')
                 .addText(text => text
-                    .setPlaceholder('moc')
+                    .setPlaceholder('Moc')
                     .setValue(mocSettings.mocBasePath || 'moc')
                     .onChange(async (value) => {
                         mocSettings.mocBasePath = value;
@@ -212,7 +212,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
                 .setName('Resources path')
                 .setDesc('Directory containing resource notes (relative to vault root)')
                 .addText(text => text
-                    .setPlaceholder('resources')
+                    .setPlaceholder('Resources')
                     .setValue(mocSettings.resourcesPath || 'resources')
                     .onChange(async (value) => {
                         mocSettings.resourcesPath = value;

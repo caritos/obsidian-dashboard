@@ -37,15 +37,15 @@ export class MocTrendingWidget extends Widget {
         content.createEl('p', { text: 'Loading trending MOCs...' });
     }
 
-    async update(): Promise<void> {
-        if (!this.containerEl) return;
+    update(): Promise<void> {
+        if (!this.containerEl) return Promise.resolve();
 
         const settings = this.settings as unknown as MocTrendingSettings;
         const trendingData = this.mocDataCollector.collectTrendingMocs(settings);
 
         // Render categories
         const content = this.containerEl.querySelector('.moc-trending-container') as HTMLElement;
-        if (!content) return;
+        if (!content) return Promise.resolve();
 
         content.empty();
 
@@ -53,6 +53,8 @@ export class MocTrendingWidget extends Widget {
         this.renderCategory(content, 'what', '📋 What (%)', trendingData.get('what') || []);
         this.renderCategory(content, 'where', '📍 Where (+)', trendingData.get('where') || []);
         this.renderCategory(content, 'who', '👤 Who (~)', trendingData.get('who') || []);
+
+        return Promise.resolve();
     }
 
     private renderCategory(container: HTMLElement, category: MocCategory, title: string, mocs: MocTrendingData[]): void {
@@ -103,7 +105,7 @@ export class MocTrendingWidget extends Widget {
             e.stopPropagation();
             new MocTrendingModal(
                 this.app,
-                `Recently Active Notes - ${moc.mocName}`,
+                `Recently active notes - ${moc.mocName}`,
                 moc.recentlyLinkedNotes
             ).open();
         });
@@ -124,7 +126,7 @@ export class MocTrendingWidget extends Widget {
             });
             new MocTrendingModal(
                 this.app,
-                `New Notes Linking to ${moc.mocName}`,
+                `New notes linking to ${moc.mocName}`,
                 newNotes
             ).open();
         });

@@ -72,29 +72,29 @@ export class StatsWidget extends Widget {
 
             // Render each visible metric
             if (settings.visibleMetrics.includes('total')) {
-                this.renderStatCard(grid, 'Total Notes', stats.total.toString(), 'file-text');
+                this.renderStatCard(grid, 'Total notes', stats.total.toString(), 'file-text');
             }
 
             if (settings.visibleMetrics.includes('currentStreak')) {
-                this.renderStatCard(grid, 'Current Streak', `${stats.currentStreak} days`, 'flame');
+                this.renderStatCard(grid, 'Current streak', `${stats.currentStreak} days`, 'flame');
             }
 
             if (settings.visibleMetrics.includes('longestStreak')) {
-                this.renderStatCard(grid, 'Longest Streak', `${stats.longestStreak} days`, 'trophy');
+                this.renderStatCard(grid, 'Longest streak', `${stats.longestStreak} days`, 'trophy');
             }
 
             if (settings.visibleMetrics.includes('thisWeek')) {
-                this.renderStatCard(grid, 'This Week', stats.thisWeek.toString(), 'calendar');
+                this.renderStatCard(grid, 'This week', stats.thisWeek.toString(), 'calendar');
             }
 
             if (settings.visibleMetrics.includes('thisMonth')) {
-                this.renderStatCard(grid, 'This Month', stats.thisMonth.toString(), 'calendar-range');
+                this.renderStatCard(grid, 'This month', stats.thisMonth.toString(), 'calendar-range');
             }
 
             if (settings.visibleMetrics.includes('busiestDay') && stats.busiestDay) {
                 this.renderStatCard(
                     grid,
-                    'Busiest Day',
+                    'Busiest day',
                     `${stats.busiestDay.count} notes`,
                     'trending-up',
                     stats.busiestDay.date

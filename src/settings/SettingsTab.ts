@@ -86,6 +86,119 @@ export class DashboardSettingsTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                 }));
 
+        new Setting(containerEl)
+            .setName('Weather')
+            .setDesc('Show current weather conditions and forecast')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.enabledWidgets.includes('weather'))
+                .onChange(async (value) => {
+                    if (value) {
+                        if (!this.plugin.settings.enabledWidgets.includes('weather')) {
+                            this.plugin.settings.enabledWidgets.push('weather');
+                        }
+                    } else {
+                        const index = this.plugin.settings.enabledWidgets.indexOf('weather');
+                        if (index > -1) {
+                            this.plugin.settings.enabledWidgets.splice(index, 1);
+                        }
+                    }
+                    await this.plugin.saveSettings();
+                }));
+
+        // Weather Settings
+        if (this.plugin.settings.enabledWidgets.includes('weather')) {
+            new Setting(containerEl)
+                .setName('Weather')
+                .setHeading();
+
+            const weatherSettings = this.plugin.settings.widgetSettings['weather'] as Record<string, any>;
+
+            new Setting(containerEl)
+                .setName('Location file path')
+                .setDesc('Path to markdown file with location coordinates')
+                .addText(text => text
+                    .setPlaceholder('resources/current-location.md')
+                    .setValue(weatherSettings.locationFilePath || 'resources/current-location.md')
+                    .onChange(async (value) => {
+                        weatherSettings.locationFilePath = value;
+                        await this.plugin.saveSettings();
+                    }));
+
+            new Setting(containerEl)
+                .setName('Temperature unit')
+                .setDesc('Display temperature in Celsius or Fahrenheit')
+                .addDropdown(dropdown => dropdown
+                    .addOption('celsius', 'Celsius (°C)')
+                    .addOption('fahrenheit', 'Fahrenheit (°F)')
+                    .setValue(weatherSettings.temperatureUnit || 'fahrenheit')
+                    .onChange(async (value) => {
+                        weatherSettings.temperatureUnit = value;
+                        await this.plugin.saveSettings();
+                    }));
+
+            new Setting(containerEl)
+                .setName('Wind speed unit')
+                .setDesc('Display wind speed in kilometers or miles per hour')
+                .addDropdown(dropdown => dropdown
+                    .addOption('kmh', 'Kilometers per hour (km/h)')
+                    .addOption('mph', 'Miles per hour (mph)')
+                    .setValue(weatherSettings.windSpeedUnit || 'mph')
+                    .onChange(async (value) => {
+                        weatherSettings.windSpeedUnit = value;
+                        await this.plugin.saveSettings();
+                    }));
+
+            new Setting(containerEl)
+                .setName('Cache duration')
+                .setDesc('Minutes to cache weather data before refreshing')
+                .addSlider(slider => slider
+                    .setLimits(15, 120, 15)
+                    .setValue(weatherSettings.cacheDuration || 30)
+                    .setDynamicTooltip()
+                    .onChange(async (value) => {
+                        weatherSettings.cacheDuration = value;
+                        await this.plugin.saveSettings();
+                    }));
+
+            new Setting(containerEl)
+                .setName('Visible metrics')
+                .setDesc('Select which weather metrics to display')
+                .setClass('weather-metrics-setting');
+
+            const metrics = [
+                { id: 'sunrise', label: 'Sunrise' },
+                { id: 'sunset', label: 'Sunset' },
+                { id: 'wind', label: 'Wind' },
+                { id: 'humidity', label: 'Humidity' },
+                { id: 'pressure', label: 'Pressure' },
+                { id: 'uvIndex', label: 'UV index' },
+                { id: 'visibility', label: 'Visibility' }
+            ];
+
+            const visibleMetrics = weatherSettings.visibleMetrics || [];
+
+            metrics.forEach(metric => {
+                new Setting(containerEl)
+                    .setName(metric.label)
+                    .addToggle(toggle => toggle
+                        .setValue(visibleMetrics.includes(metric.id))
+                        .onChange(async (value) => {
+                            if (value) {
+                                if (!visibleMetrics.includes(metric.id)) {
+                                    visibleMetrics.push(metric.id);
+                                }
+                            } else {
+                                const index = visibleMetrics.indexOf(metric.id);
+                                if (index > -1) {
+                                    visibleMetrics.splice(index, 1);
+                                }
+                            }
+                            weatherSettings.visibleMetrics = visibleMetrics;
+                            await this.plugin.saveSettings();
+                        }));
+            });
+        }
+
         // Activity Heatmap Settings
         new Setting(containerEl)
             .setName('Activity heatmap')

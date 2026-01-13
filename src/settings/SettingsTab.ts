@@ -116,7 +116,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
 
             new Setting(containerEl)
                 .setName('Location file path')
-                .setDesc('Path to markdown file with location coordinates')
+                .setDesc('Path to Markdown file with location coordinates')
                 .addText(text => text
                     .setPlaceholder('resources/current-location.md')
                     .setValue(weatherSettings.locationFilePath || 'resources/current-location.md')
@@ -127,10 +127,10 @@ export class DashboardSettingsTab extends PluginSettingTab {
 
             new Setting(containerEl)
                 .setName('Temperature unit')
-                .setDesc('Display temperature in Celsius or Fahrenheit')
+                .setDesc('Display temperature in celsius or fahrenheit')
                 .addDropdown(dropdown => dropdown
-                    .addOption('celsius', 'Celsius (°C)')
-                    .addOption('fahrenheit', 'Fahrenheit (°F)')
+                    .addOption('celsius', 'celsius (°C)')
+                    .addOption('fahrenheit', 'fahrenheit (°F)')
                     .setValue(weatherSettings.temperatureUnit || 'fahrenheit')
                     .onChange(async (value) => {
                         weatherSettings.temperatureUnit = value as 'celsius' | 'fahrenheit';

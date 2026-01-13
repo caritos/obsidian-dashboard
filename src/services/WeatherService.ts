@@ -149,7 +149,7 @@ export class WeatherService {
         const current = json.current;
         const daily = json.daily;
 
-        const weatherCode = current.weather_code as number;
+        const weatherCode = current.weather_code;
         const weatherInfo = WEATHER_CODES[weatherCode] || {
             condition: 'Unknown',
             icon: '❓'

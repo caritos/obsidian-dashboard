@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is an **Obsidian plugin** that provides an extensible dashboard for visualizing vault analytics. Built with TypeScript and uses esbuild for bundling.
 
 **Key Features:**
+- Weather Widget (current conditions, sunrise/sunset, detailed metrics)
 - Activity Heatmap (GitHub-style contribution graph)
 - Stats Widget (streaks, totals, busiest days)
 - MOC Trending (trending topics, people, and locations based on vault activity)
@@ -50,6 +51,7 @@ The plugin uses a **factory pattern with a centralized registry** for extensibil
    - Each widget manages its own DOM rendering and data updates
 
 3. **Built-in Widgets:**
+   - `WeatherWidget` (src/widgets/WeatherWidget.ts): Weather conditions and forecast
    - `ActivityHeatmapWidget` (src/widgets/ActivityHeatmapWidget.ts): 365-day heatmap
    - `StatsWidget` (src/widgets/StatsWidget.ts): Key metrics display
    - `MocTrendingWidget` (src/widgets/MocTrendingWidget.ts): Trending MOCs display

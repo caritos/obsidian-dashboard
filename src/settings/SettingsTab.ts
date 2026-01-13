@@ -127,7 +127,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
 
             new Setting(containerEl)
                 .setName('Temperature unit')
-                .setDesc('Display temperature in Celsius or Fahrenheit')
+                .setDesc('Display temperature in celsius or fahrenheit')
                 .addDropdown(dropdown => dropdown
                     .addOption('celsius', 'Celsius')
                     .addOption('fahrenheit', 'Fahrenheit')

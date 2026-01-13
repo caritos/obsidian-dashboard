@@ -167,6 +167,115 @@ src/
 - Merged with `DEFAULT_SETTINGS` on load
 - To save: call `plugin.saveSettings()` after modifying `plugin.settings`
 
+## Obsidian Automated Review Bot - Common Issues to Avoid
+
+When submitting to the Obsidian Community Plugin directory, the automated scan checks for code quality issues. Here are the issues we've encountered and how to avoid them:
+
+### Critical Issues (Must Fix)
+
+1. **Sentence Case for UI Text**
+   - **Rule:** All user-facing text (labels, descriptions, placeholders, options) must use sentence case
+   - **Sentence case:** First word capitalized, rest lowercase (except proper nouns/acronyms)
+   - **Examples:**
+     - ❌ `MOC trending` → ✅ `Trending maps of content`
+     - ❌ `YOUR_LAT` → ✅ `your_lat` (even in placeholders)
+     - ❌ `Moc` → ✅ `Moc` (proper noun at start)
+     - ❌ `resources` → ✅ `Resources` (placeholder at start)
+   - **Where to check:**
+     - `.setName()` and `.setDesc()` in SettingsTab.ts
+     - `.addOption()` labels in dropdowns
+     - `.createEl()` text content in widgets
+     - Placeholder text in inputs
+
+2. **Async Methods Must Have Await**
+   - **Rule:** Any method marked `async` must contain at least one `await` expression
+   - **Fix:** Add an actual async operation (e.g., `await this.app.vault.cachedRead(file)`)
+   - **Example:**
+     ```typescript
+     // ❌ Bad: async but no await
+     async readLocation(filePath: string): Promise<LocationData> {
+         const file = this.app.vault.getAbstractFileByPath(filePath);
+         const cache = this.app.metadataCache.getFileCache(file);
+         return { latitude, longitude };
+     }
+
+     // ✅ Good: async with await
+     async readLocation(filePath: string): Promise<LocationData> {
+         const file = this.app.vault.getAbstractFileByPath(filePath);
+         await this.app.vault.cachedRead(file); // Ensure file is loaded
+         const cache = this.app.metadataCache.getFileCache(file);
+         return { latitude, longitude };
+     }
+     ```
+
+3. **No 'any' Types**
+   - **Rule:** Explicit `any` types are not allowed
+   - **Fix:** Create proper TypeScript interfaces
+   - **Example:**
+     ```typescript
+     // ❌ Bad: using any
+     private parseAPIResponse(json: any): WeatherData { ... }
+     const settings = this.plugin.settings.widgetSettings['weather'] as Record<string, any>;
+
+     // ✅ Good: proper interfaces
+     interface OpenMeteoResponse {
+         current: { temperature_2m: number; ... };
+         daily: { sunrise: string[]; ... };
+     }
+     private parseAPIResponse(json: OpenMeteoResponse): WeatherData { ... }
+     const settings = this.plugin.settings.widgetSettings['weather'] as WeatherSettings;
+     ```
+
+### Optional Issues (Best Practices)
+
+4. **Remove Unused Imports**
+   - **Rule:** Don't import modules/types that aren't used
+   - **Example:**
+     ```typescript
+     // ❌ Bad: TFile imported but not used
+     import { TFile } from 'obsidian';
+     export interface LocationData { ... }
+
+     // ✅ Good: removed unused import
+     export interface LocationData { ... }
+     ```
+
+5. **Remove Unused Variables**
+   - **Rule:** Don't assign values to variables that are never read
+   - **Example:**
+     ```typescript
+     // ❌ Bad: iconEl assigned but never used
+     const iconEl = tempSection.createEl('span', { cls: 'weather-icon', text: icon });
+
+     // ✅ Good: no assignment if not needed
+     tempSection.createEl('span', { cls: 'weather-icon', text: icon });
+     ```
+
+6. **Type Assertions for Union Types**
+   - **Rule:** When dropdown values are string unions, TypeScript needs type assertions
+   - **Example:**
+     ```typescript
+     // ❌ Bad: string not assignable to 'celsius' | 'fahrenheit'
+     .onChange(async (value) => {
+         weatherSettings.temperatureUnit = value;
+     })
+
+     // ✅ Good: type assertion
+     .onChange(async (value) => {
+         weatherSettings.temperatureUnit = value as 'celsius' | 'fahrenheit';
+     })
+     ```
+
+### Pre-Submission Checklist
+
+Before pushing changes, verify:
+- [ ] All UI text uses sentence case (check .setName, .setDesc, .addOption, .createEl text)
+- [ ] All `async` methods contain at least one `await` expression
+- [ ] No `any` types (create interfaces instead)
+- [ ] No unused imports (check all import statements)
+- [ ] No unused variables (remove assignments for unused values)
+- [ ] Run `npm run build` successfully with no TypeScript errors
+
 ## Project Status
 
 - **Current Version:** 0.1.0

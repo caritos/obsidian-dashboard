@@ -175,17 +175,57 @@ When submitting to the Obsidian Community Plugin directory, the automated scan c
 
 1. **Sentence Case for UI Text**
    - **Rule:** All user-facing text (labels, descriptions, placeholders, options) must use sentence case
-   - **Sentence case:** First word capitalized, rest lowercase (except proper nouns/acronyms)
-   - **Examples:**
-     - ❌ `MOC trending` → ✅ `Trending maps of content`
-     - ❌ `YOUR_LAT` → ✅ `your_lat` (even in placeholders)
-     - ❌ `Moc` → ✅ `Moc` (proper noun at start)
-     - ❌ `resources` → ✅ `Resources` (placeholder at start)
+   - **Sentence case definition:**
+     - First word is ALWAYS capitalized
+     - Subsequent words are lowercase (unless they are proper nouns, acronyms, or technical terms that require capitalization)
+     - This applies to ALL UI text: setting names, descriptions, dropdown options, button labels, error messages, etc.
+
+   - **Common Examples:**
+     ```typescript
+     // Setting Names (.setName)
+     ✅ 'Temperature unit'        // First word capitalized
+     ✅ 'Location file path'      // First word capitalized
+     ❌ 'temperature unit'        // First word must be capitalized
+     ❌ 'Temperature Unit'        // Don't title case
+
+     // Descriptions (.setDesc)
+     ✅ 'Display temperature in celsius or fahrenheit'  // First word capitalized, units lowercase
+     ✅ 'Path to Markdown file with location coordinates' // 'Markdown' is proper noun
+     ❌ 'display temperature...'  // First word must be capitalized
+     ❌ 'Path to markdown file...' // 'Markdown' should be capitalized (proper noun)
+
+     // Dropdown Options (.addOption)
+     ✅ .addOption('celsius', 'Celsius (°C)')     // First word capitalized
+     ✅ .addOption('fahrenheit', 'Fahrenheit (°F)') // First word capitalized
+     ❌ .addOption('celsius', 'celsius (°C)')     // First word must be capitalized
+     ❌ .addOption('kmh', 'kilometers per hour')  // First word must be capitalized
+     ✅ .addOption('kmh', 'Kilometers per hour (km/h)') // Correct
+
+     // Placeholders (.setPlaceholder)
+     ✅ 'Resources'               // First word capitalized even if it's just a path
+     ✅ 'your_lat'                // Lowercase because it's a technical placeholder
+     ❌ 'resources'               // First word must be capitalized
+     ❌ 'YOUR_LAT'                // Should be lowercase (technical placeholder)
+
+     // Error Messages and Content Text
+     ✅ 'No location set'         // First word capitalized
+     ✅ 'Loading weather...'      // First word capitalized
+     ❌ 'no location set'         // First word must be capitalized
+     ```
+
+   - **Special Cases:**
+     - Proper nouns: Always capitalized regardless of position (e.g., "Markdown", "Celsius", "Fahrenheit")
+     - Technical terms: Follow standard casing (e.g., "JSON", "API", "URL")
+     - Mid-sentence units: Lowercase unless at the start (e.g., "Display in celsius" but "Celsius is a temperature scale")
+     - Acronyms: Keep uppercase (e.g., "UV index", "MOC trending")
+
    - **Where to check:**
-     - `.setName()` and `.setDesc()` in SettingsTab.ts
-     - `.addOption()` labels in dropdowns
-     - `.createEl()` text content in widgets
-     - Placeholder text in inputs
+     - `.setName()` - Setting titles
+     - `.setDesc()` - Setting descriptions
+     - `.addOption()` - Dropdown option labels (second parameter)
+     - `.setPlaceholder()` - Input placeholders
+     - `.createEl()` with `text:` - Any displayed text in widgets
+     - Error messages and user-facing strings
 
 2. **Async Methods Must Have Await**
    - **Rule:** Any method marked `async` must contain at least one `await` expression

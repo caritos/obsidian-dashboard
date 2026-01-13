@@ -129,8 +129,8 @@ export class DashboardSettingsTab extends PluginSettingTab {
                 .setName('Temperature unit')
                 .setDesc('Display temperature in celsius or fahrenheit')
                 .addDropdown(dropdown => dropdown
-                    .addOption('celsius', 'celsius (°C)')
-                    .addOption('fahrenheit', 'fahrenheit (°F)')
+                    .addOption('celsius', 'Celsius (°C)')
+                    .addOption('fahrenheit', 'Fahrenheit (°F)')
                     .setValue(weatherSettings.temperatureUnit || 'fahrenheit')
                     .onChange(async (value) => {
                         weatherSettings.temperatureUnit = value as 'celsius' | 'fahrenheit';

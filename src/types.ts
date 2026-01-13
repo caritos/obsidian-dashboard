@@ -10,10 +10,25 @@ export interface WidgetSettings {
 }
 
 export const DEFAULT_SETTINGS: DashboardSettings = {
-    enabledWidgets: ['activity-heatmap', 'stats', 'moc-trending'],
-    widgetOrder: ['activity-heatmap', 'stats', 'moc-trending'],
+    enabledWidgets: ['weather', 'activity-heatmap', 'stats', 'moc-trending'],
+    widgetOrder: ['weather', 'activity-heatmap', 'stats', 'moc-trending'],
     autoRefresh: true,
     widgetSettings: {
+        'weather': {
+            locationFilePath: 'resources/current-location.md',
+            temperatureUnit: 'fahrenheit',
+            windSpeedUnit: 'mph',
+            cacheDuration: 30,
+            visibleMetrics: [
+                'sunrise',
+                'sunset',
+                'wind',
+                'humidity',
+                'pressure',
+                'uvIndex',
+                'visibility'
+            ]
+        },
         'activity-heatmap': {
             days: 365,
             countMode: 'unique',

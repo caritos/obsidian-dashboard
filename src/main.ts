@@ -8,6 +8,7 @@ import { DashboardSettingsTab } from './settings/SettingsTab';
 import { DataCollector } from './services/DataCollector';
 import { MocDataCollector } from './services/MocDataCollector';
 import { MocTrendingWidget } from './widgets/MocTrendingWidget';
+import { WeatherWidget } from './widgets/WeatherWidget';
 
 export default class DashboardPlugin extends Plugin {
     settings: DashboardSettings;
@@ -43,6 +44,11 @@ export default class DashboardPlugin extends Plugin {
         this.widgetRegistry.register('moc-trending', (settings: WidgetSettings) => {
             const mocDataCollector = new MocDataCollector(this.app.vault, this.app.metadataCache);
             return new MocTrendingWidget(this.app, mocDataCollector, settings);
+        });
+
+        // Register Weather Widget
+        this.widgetRegistry.register('weather', (settings: WidgetSettings) => {
+            return new WeatherWidget(this.app, settings);
         });
 
         // Register view

@@ -1,6 +1,7 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import DashboardPlugin from '../main';
 import { MocTrendingSettings } from '../services/MocTypes';
+import { WeatherSettings } from '../services/WeatherTypes';
 
 export class DashboardSettingsTab extends PluginSettingTab {
     plugin: DashboardPlugin;
@@ -111,7 +112,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
                 .setName('Weather')
                 .setHeading();
 
-            const weatherSettings = this.plugin.settings.widgetSettings['weather'] as Record<string, any>;
+            const weatherSettings = this.plugin.settings.widgetSettings['weather'] as unknown as WeatherSettings;
 
             new Setting(containerEl)
                 .setName('Location file path')
@@ -132,7 +133,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
                     .addOption('fahrenheit', 'Fahrenheit (°F)')
                     .setValue(weatherSettings.temperatureUnit || 'fahrenheit')
                     .onChange(async (value) => {
-                        weatherSettings.temperatureUnit = value;
+                        weatherSettings.temperatureUnit = value as 'celsius' | 'fahrenheit';
                         await this.plugin.saveSettings();
                     }));
 
@@ -144,7 +145,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
                     .addOption('mph', 'Miles per hour (mph)')
                     .setValue(weatherSettings.windSpeedUnit || 'mph')
                     .onChange(async (value) => {
-                        weatherSettings.windSpeedUnit = value;
+                        weatherSettings.windSpeedUnit = value as 'kmh' | 'mph';
                         await this.plugin.saveSettings();
                     }));
 

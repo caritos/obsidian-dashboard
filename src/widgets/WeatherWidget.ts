@@ -101,7 +101,7 @@ export class WeatherWidget extends Widget {
             });
             const code = errorEl.createEl('pre');
             code.createEl('code', {
-                text: '---\nlatitude: YOUR_LAT\nlongitude: YOUR_LON\n---'
+                text: '---\nlatitude: your_lat\nlongitude: your_lon\n---'
             });
         } else {
             errorEl.createEl('p', { text: this.error || 'Unknown error' });
@@ -127,16 +127,16 @@ export class WeatherWidget extends Widget {
         const hero = container.createEl('div', { cls: 'weather-hero' });
 
         const tempSection = hero.createEl('div', { cls: 'weather-temp-section' });
-        const iconEl = tempSection.createEl('span', {
+        tempSection.createEl('span', {
             cls: 'weather-icon',
             text: current.icon
         });
-        const tempEl = tempSection.createEl('span', {
+        tempSection.createEl('span', {
             cls: 'weather-temp',
             text: `${Math.round(current.temperature)}°`
         });
 
-        const conditionEl = hero.createEl('div', {
+        hero.createEl('div', {
             cls: 'weather-condition',
             text: current.condition
         });

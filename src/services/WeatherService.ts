@@ -6,6 +6,26 @@ import {
     WEATHER_CODES
 } from './WeatherTypes';
 
+interface OpenMeteoResponse {
+    current: {
+        temperature_2m: number;
+        apparent_temperature: number;
+        weather_code: number;
+        wind_speed_10m: number;
+        wind_direction_10m: number;
+        relative_humidity_2m: number;
+        surface_pressure: number;
+        uv_index: number;
+        visibility: number;
+    };
+    daily: {
+        sunrise: string[];
+        sunset: string[];
+        temperature_2m_max: number[];
+        temperature_2m_min: number[];
+    };
+}
+
 export class WeatherService {
     private cache: WeatherCache | null = null;
     private inFlight: Promise<WeatherData> | null = null;
@@ -125,7 +145,7 @@ export class WeatherService {
     /**
      * Parse API response into our data structure
      */
-    private parseAPIResponse(json: any, location?: string): WeatherData {
+    private parseAPIResponse(json: OpenMeteoResponse, location?: string): WeatherData {
         const current = json.current;
         const daily = json.daily;
 

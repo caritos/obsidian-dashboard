@@ -1,5 +1,3 @@
-import { TFile } from 'obsidian';
-
 export interface LocationData {
     latitude: number;
     longitude: number;

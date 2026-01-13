@@ -16,6 +16,9 @@ export class LocationReader {
             throw new Error(`Location file not found: ${filePath}`);
         }
 
+        // Ensure file content is loaded for metadata cache
+        await this.app.vault.cachedRead(file);
+
         // Get cached metadata
         const cache = this.app.metadataCache.getFileCache(file);
 

@@ -34,7 +34,7 @@ export class MocDataCollector {
             return this.cache;
         }
 
-        const categories: MocCategory[] = ['what', 'where', 'who'];
+        const categories: MocCategory[] = ['what', 'where', 'who', 'when'];
         const result = new Map<MocCategory, MocTrendingData[]>();
 
         // Scan resources directory for MOC references
@@ -100,11 +100,12 @@ export class MocDataCollector {
                 const frontmatter = cache.frontmatter;
                 const isNewNote = file.stat.ctime >= cutoffTime;
 
-                // Extract MOC references from who/what/where fields
+                // Extract MOC references from who/what/where/when fields
                 const fields: { field: string; category: MocCategory }[] = [
                     { field: 'who', category: 'who' },
                     { field: 'what', category: 'what' },
-                    { field: 'where', category: 'where' }
+                    { field: 'where', category: 'where' },
+                    { field: 'when', category: 'when' }
                 ];
 
                 for (const { field, category } of fields) {
@@ -205,13 +206,33 @@ export class MocDataCollector {
         const categoryDirMap = {
             'what': 'what (%)',
             'where': 'where (+)',
-            'who': 'who (~)'
+            'who': 'who (~)',
+            'when': 'when (@)'
         };
 
         const categoryDir = categoryDirMap[category];
-        const prefix = category === 'what' ? '%' : category === 'where' ? '+' : '~';
+        const prefix = category === 'what' ? '%' : category === 'where' ? '+' : category === 'who' ? '~' : '@';
 
-        // Try different filename patterns
+        // For "when" category, search in subdirectories (year, month, week, day)
+        if (category === 'when') {
+            const subdirs = ['year', 'month', 'week', 'day'];
+            for (const subdir of subdirs) {
+                const patterns = [
+                    normalizePath(`${settings.mocBasePath}/${categoryDir}/${subdir}/${prefix}${mocName}.md`),
+                    normalizePath(`${settings.mocBasePath}/${categoryDir}/${subdir}/${mocName}.md`)
+                ];
+
+                for (const pattern of patterns) {
+                    const file = this.vault.getAbstractFileByPath(pattern);
+                    if (file instanceof TFile) {
+                        return file;
+                    }
+                }
+            }
+            return null;
+        }
+
+        // Try different filename patterns for other categories
         const patterns = [
             normalizePath(`${settings.mocBasePath}/${categoryDir}/${prefix}${mocName}.md`),
             normalizePath(`${settings.mocBasePath}/${categoryDir}/${mocName}.md`)

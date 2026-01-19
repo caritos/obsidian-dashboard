@@ -1,6 +1,6 @@
 import { TFile } from 'obsidian';
 
-export type MocCategory = 'what' | 'where' | 'who';
+export type MocCategory = 'what' | 'where' | 'who' | 'when';
 
 export interface MocTrendingData {
     category: MocCategory;

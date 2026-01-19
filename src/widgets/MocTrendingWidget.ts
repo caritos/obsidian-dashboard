@@ -53,6 +53,7 @@ export class MocTrendingWidget extends Widget {
         this.renderCategory(content, 'what', '📋 What (%)', trendingData.get('what') || []);
         this.renderCategory(content, 'where', '📍 Where (+)', trendingData.get('where') || []);
         this.renderCategory(content, 'who', '👤 Who (~)', trendingData.get('who') || []);
+        this.renderCategory(content, 'when', '📅 When (@)', trendingData.get('when') || []);
 
         return Promise.resolve();
     }

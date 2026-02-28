@@ -79,8 +79,8 @@ export class WeatherWidget extends Widget {
                 }
             );
 
-        } catch (error) {
-            this.error = error.message;
+        } catch (err) {
+            this.error = err instanceof Error ? err.message : String(err);
             this.weatherData = this.weatherService.getCachedData();
         }
 

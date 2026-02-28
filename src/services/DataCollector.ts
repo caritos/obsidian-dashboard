@@ -18,18 +18,18 @@ export class DataCollector {
         const now = Date.now();
         const cacheAge = now - this.cacheTime;
         if (this.cache && cacheAge < this.CACHE_TTL) {
-            console.log('[DataCollector] Using cached data (age:', Math.round(cacheAge / 1000), 'seconds)');
+            console.debug('[DataCollector] Using cached data (age:', Math.round(cacheAge / 1000), 'seconds)');
             return this.cache;
         }
 
-        console.log('[DataCollector] Cache miss or expired, scanning vault...');
+        console.debug('[DataCollector] Cache miss or expired, scanning vault...');
 
         const dailyActivity = new Map<string, DailyActivity>();
 
         let files: TFile[];
         try {
             files = this.vault.getMarkdownFiles();
-            console.log('[DataCollector] Total markdown files in vault:', files.length);
+            console.debug('[DataCollector] Total markdown files in vault:', files.length);
         } catch (error) {
             console.error('Error getting markdown files from vault:', error);
             throw new Error('Failed to access vault files');
@@ -38,11 +38,13 @@ export class DataCollector {
         const endDate = new Date();
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - days);
-        console.log('[DataCollector] Date range:', this.getDateString(startDate.getTime()), 'to', this.getDateString(endDate.getTime()));
-        console.log('[DataCollector] Scanning', days, 'days of activity');
+        console.debug('[DataCollector] Date range:', this.getDateString(startDate.getTime()), 'to', this.getDateString(endDate.getTime()));
+        console.debug('[DataCollector] Scanning', days, 'days of activity');
 
         let filesInRange = 0;
         let filesProcessed = 0;
+        let filesWithFrontmatter = 0;
+        let filesSkipped = 0;
 
         for (const file of files) {
             try {
@@ -51,26 +53,21 @@ export class DataCollector {
                 // Try to extract date from frontmatter "when" field first
                 const frontmatterDate = this.extractDateFromFrontmatter(file);
 
-                let createdDate: string;
-                let modifiedDate: string;
-
-                if (frontmatterDate) {
-                    // Use frontmatter date as the creation date
-                    createdDate = frontmatterDate;
-                    modifiedDate = frontmatterDate;
-                } else {
-                    // Fall back to filesystem timestamps
-                    createdDate = this.getDateString(file.stat.ctime);
-                    modifiedDate = this.getDateString(file.stat.mtime);
+                // Skip files without frontmatter dates - their filesystem timestamps are unreliable
+                // (usually set to sync/migration date rather than actual creation date)
+                if (!frontmatterDate) {
+                    filesSkipped++;
+                    continue;
                 }
+
+                filesWithFrontmatter++;
+
+                const createdDate = frontmatterDate;
+                const createdTimestamp = new Date(frontmatterDate).getTime();
 
                 let addedToRange = false;
 
-                // Track creation (using frontmatter date if available)
-                const createdTimestamp = frontmatterDate
-                    ? new Date(frontmatterDate).getTime()
-                    : file.stat.ctime;
-
+                // Track creation using frontmatter date
                 if (this.isInRange(createdTimestamp, startDate, endDate)) {
                     if (!dailyActivity.has(createdDate)) {
                         dailyActivity.set(createdDate, {
@@ -82,26 +79,13 @@ export class DataCollector {
                     addedToRange = true;
                 }
 
-                // Track modification (only if no frontmatter date, otherwise skip to avoid duplicates)
-                if (!frontmatterDate && this.isInRange(file.stat.mtime, startDate, endDate)) {
-                    if (!dailyActivity.has(modifiedDate)) {
-                        dailyActivity.set(modifiedDate, {
-                            created: new Set(),
-                            modified: new Set()
-                        });
-                    }
-                    dailyActivity.get(modifiedDate)!.modified.add(file);
-                    addedToRange = true;
-                }
-
                 if (addedToRange) {
                     filesInRange++;
                 }
 
                 // Log first few files for debugging
                 if (filesProcessed <= 5) {
-                    console.log(`[DataCollector] File ${filesProcessed}:`, file.path,
-                        'created:', createdDate, 'modified:', modifiedDate,
+                    console.debug(`[DataCollector] File ${filesProcessed}:`, file.path,
                         'frontmatterDate:', frontmatterDate,
                         'inRange:', addedToRange);
                 }
@@ -112,8 +96,11 @@ export class DataCollector {
             }
         }
 
-        console.log('[DataCollector] Processed', filesProcessed, 'files,', filesInRange, 'in date range');
-        console.log('[DataCollector] Unique activity dates found:', dailyActivity.size);
+        console.debug('[DataCollector] Processed', filesProcessed, 'files');
+        console.debug('[DataCollector] Files with frontmatter dates:', filesWithFrontmatter);
+        console.debug('[DataCollector] Files skipped (no frontmatter):', filesSkipped);
+        console.debug('[DataCollector] Files in date range:', filesInRange);
+        console.debug('[DataCollector] Unique activity dates found:', dailyActivity.size);
 
         const activityData: ActivityData = {
             dailyActivity,
@@ -134,6 +121,10 @@ export class DataCollector {
     calculateStreaks(activityData: ActivityData, minNotes: number = 1): StreakData {
         const sortedDates = Array.from(activityData.dailyActivity.keys()).sort();
 
+        console.debug('[Streaks] Total unique dates with activity:', sortedDates.length);
+        console.debug('[Streaks] First 10 dates:', sortedDates.slice(0, 10));
+        console.debug('[Streaks] Last 10 dates:', sortedDates.slice(-10));
+
         let currentStreak = 0;
         let longestStreak = 0;
         let currentStart: string | null = null;
@@ -142,6 +133,9 @@ export class DataCollector {
 
         const today = this.getDateString(Date.now());
         let previousDate = this.getPreviousDate(today);
+
+        console.debug('[Streaks] Today:', today, 'Has activity today:', activityData.dailyActivity.has(today));
+        console.debug('[Streaks] Yesterday:', previousDate, 'Has activity yesterday:', activityData.dailyActivity.has(previousDate));
 
         // Check if there's activity today or yesterday
         const hasRecentActivity = activityData.dailyActivity.has(today) ||
@@ -189,6 +183,13 @@ export class DataCollector {
                 // Check if this date is consecutive to the last date
                 const isConsecutive = lastDate === null || this.getNextDate(lastDate) === date;
 
+                // Debug logging for first few dates
+                if (i < 10) {
+                    console.debug(`[Streaks] Date ${i}:`, date, 'lastDate:', lastDate,
+                        'nextDate:', lastDate ? this.getNextDate(lastDate) : 'N/A',
+                        'isConsecutive:', isConsecutive, 'tempStreak:', tempStreak);
+                }
+
                 if (isConsecutive) {
                     if (tempStreak === 0) {
                         tempStart = date;
@@ -200,9 +201,13 @@ export class DataCollector {
                         longestStreak = tempStreak;
                         longestStart = tempStart;
                         longestEnd = date;
+                        console.debug('[Streaks] New longest streak:', longestStreak, 'days from', longestStart, 'to', longestEnd);
                     }
                 } else {
                     // Gap detected, reset the streak
+                    if (tempStreak > 1) {
+                        console.debug('[Streaks] Gap detected after', tempStreak, 'day streak. Last date:', lastDate, 'Current date:', date);
+                    }
                     tempStreak = 1;
                     tempStart = date;
                     lastDate = date;
@@ -219,6 +224,17 @@ export class DataCollector {
                 lastDate = null;
             }
         }
+
+        // Check if the final streak is the longest
+        if (tempStreak > longestStreak) {
+            longestStreak = tempStreak;
+            longestStart = tempStart;
+            longestEnd = lastDate;
+            console.debug('[Streaks] Final streak is longest:', longestStreak, 'days from', longestStart, 'to', longestEnd);
+        }
+
+        console.debug('[Streaks] FINAL - Current streak:', currentStreak, 'days');
+        console.debug('[Streaks] FINAL - Longest streak:', longestStreak, 'days from', longestStart, 'to', longestEnd);
 
         return {
             current: currentStreak,
@@ -247,15 +263,23 @@ export class DataCollector {
     }
 
     private getPreviousDate(dateString: string): string {
-        const date = new Date(dateString);
-        date.setDate(date.getDate() - 1);
-        return this.getDateString(date.getTime());
+        // Parse the date components directly to avoid timezone issues
+        const [year, month, day] = dateString.split('-').map(Number);
+        const date = new Date(year, month - 1, day - 1);
+        const newYear = date.getFullYear();
+        const newMonth = String(date.getMonth() + 1).padStart(2, '0');
+        const newDay = String(date.getDate()).padStart(2, '0');
+        return `${newYear}-${newMonth}-${newDay}`;
     }
 
     private getNextDate(dateString: string): string {
-        const date = new Date(dateString);
-        date.setDate(date.getDate() + 1);
-        return this.getDateString(date.getTime());
+        // Parse the date components directly to avoid timezone issues
+        const [year, month, day] = dateString.split('-').map(Number);
+        const date = new Date(year, month - 1, day + 1);
+        const newYear = date.getFullYear();
+        const newMonth = String(date.getMonth() + 1).padStart(2, '0');
+        const newDay = String(date.getDate()).padStart(2, '0');
+        return `${newYear}-${newMonth}-${newDay}`;
     }
 
     private extractDateFromFrontmatter(file: TFile): string | null {

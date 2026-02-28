@@ -98,7 +98,17 @@ export class MocDataCollector {
                 }
 
                 const frontmatter = cache.frontmatter;
-                const isNewNote = file.stat.ctime >= cutoffTime;
+
+                // Extract date from frontmatter "when" field
+                const frontmatterDate = this.extractDateFromFrontmatter(file);
+
+                // Skip files without frontmatter dates - their timestamps are unreliable
+                if (!frontmatterDate) {
+                    continue;
+                }
+
+                const fileTimestamp = new Date(frontmatterDate).getTime();
+                const isNewNote = fileTimestamp >= cutoffTime;
 
                 // Extract MOC references from who/what/where/when fields
                 const fields: { field: string; category: MocCategory }[] = [
@@ -157,13 +167,19 @@ export class MocDataCollector {
         const cutoffTime = now - timeWindowMs;
 
         for (const [mocName, refs] of mocMap.entries()) {
-            // Calculate activity score (notes with recent creates/modifies)
+            // Calculate activity score (notes with recent creates based on frontmatter dates)
             const recentlyActiveNotes = new Set<TFile>();
             for (const ref of refs) {
                 const file = ref.sourceFile;
-                const hasRecentActivity =
-                    file.stat.ctime >= cutoffTime ||
-                    file.stat.mtime >= cutoffTime;
+
+                // Use frontmatter date instead of filesystem timestamps
+                const frontmatterDate = this.extractDateFromFrontmatter(file);
+                if (!frontmatterDate) {
+                    continue;
+                }
+
+                const fileTimestamp = new Date(frontmatterDate).getTime();
+                const hasRecentActivity = fileTimestamp >= cutoffTime;
 
                 if (hasRecentActivity) {
                     recentlyActiveNotes.add(file);
@@ -251,5 +267,35 @@ export class MocDataCollector {
     invalidateCache() {
         this.cache = null;
         this.cacheTime = 0;
+    }
+
+    private extractDateFromFrontmatter(file: TFile): string | null {
+        try {
+            const metadata = this.metadataCache.getFileCache(file);
+            if (!metadata?.frontmatter?.when) {
+                return null;
+            }
+
+            const whenField = metadata.frontmatter.when;
+            const whenArray = Array.isArray(whenField) ? whenField : [whenField];
+
+            // Look for YYYY-MM-DD format in the when array
+            // Example: "[[@2020-01-13]]" -> "2020-01-13"
+            const datePattern = /\[\[@?(\d{4}-\d{2}-\d{2})\]\]/;
+
+            for (const value of whenArray) {
+                if (typeof value !== 'string') continue;
+
+                const match = value.match(datePattern);
+                if (match) {
+                    return match[1]; // Return YYYY-MM-DD
+                }
+            }
+
+            return null;
+        } catch (error) {
+            // Silently fail and fall back to null
+            return null;
+        }
     }
 }

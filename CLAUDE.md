@@ -159,9 +159,6 @@ src/
 - Access vault via `this.app.vault`
 - Use `TFile` for file references (has `stat.ctime`, `stat.mtime`)
 
-### Known Limitations
-- Debug console.log statements present in DataCollector.ts and ActivityHeatmapWidget.ts
-
 ### Settings Persistence
 - Settings stored via `this.loadData()` / `this.saveData()` (Obsidian API)
 - Merged with `DEFAULT_SETTINGS` on load

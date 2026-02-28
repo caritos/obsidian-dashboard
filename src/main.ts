@@ -140,7 +140,7 @@ export default class DashboardPlugin extends Plugin {
         // Deep merge widgetSettings
         if (source.widgetSettings) {
             for (const widgetId in source.widgetSettings) {
-                if (source.widgetSettings.hasOwnProperty(widgetId)) {
+                if (Object.prototype.hasOwnProperty.call(source.widgetSettings, widgetId)) {
                     result.widgetSettings[widgetId] = {
                         ...result.widgetSettings[widgetId],
                         ...source.widgetSettings[widgetId]

@@ -35,14 +35,27 @@ export class PhotoWidget extends Widget {
         const header = containerEl.createEl('div', { cls: 'widget-header photo-widget-header' });
         header.createEl('h3', { text: this.getName() });
 
+        // Add button container
+        const buttonContainer = header.createEl('div', { cls: 'photo-button-container' });
+
         // Add refresh button
-        const refreshButton = header.createEl('button', {
+        const refreshButton = buttonContainer.createEl('button', {
             cls: 'photo-refresh-button',
             text: '🔄'
         });
         refreshButton.setAttribute('aria-label', 'Refresh photo');
         refreshButton.addEventListener('click', () => {
             void this.update();
+        });
+
+        // Add rescan button
+        const rescanButton = buttonContainer.createEl('button', {
+            cls: 'photo-rescan-button',
+            text: '🔍'
+        });
+        rescanButton.setAttribute('aria-label', 'Rescan vault for photos');
+        rescanButton.addEventListener('click', () => {
+            void this.rescanVault();
         });
 
         // Create photo container
@@ -56,16 +69,81 @@ export class PhotoWidget extends Widget {
     }
 
     async update(): Promise<void> {
-        // Get a random photo
-        this.currentPhoto = await this.photoCollector.getRandomPhoto();
+        try {
+            // Show loading state
+            if (this.containerEl) {
+                const photoContainer = this.containerEl.querySelector('.photo-container') as HTMLElement;
+                if (photoContainer) {
+                    photoContainer.empty();
+                    photoContainer.createEl('p', { text: 'Loading photo...' });
+                }
+            }
 
-        // Re-render
-        if (this.containerEl) {
-            this.render(this.containerEl);
+            // Get a random photo
+            this.currentPhoto = await this.photoCollector.getRandomPhoto();
+
+            // Re-render
+            if (this.containerEl) {
+                this.render(this.containerEl);
+            }
+
+            // Set up auto-refresh if enabled
+            this.setupAutoRefresh();
+        } catch (error) {
+            console.error('Photo widget error:', error);
+            if (this.containerEl) {
+                const photoContainer = this.containerEl.querySelector('.photo-container') as HTMLElement;
+                if (photoContainer) {
+                    photoContainer.empty();
+                    photoContainer.createEl('p', {
+                        text: `Error loading photos: ${error instanceof Error ? error.message : String(error)}`,
+                        cls: 'photo-error'
+                    });
+                }
+            }
         }
+    }
 
-        // Set up auto-refresh if enabled
-        this.setupAutoRefresh();
+    async rescanVault(): Promise<void> {
+        try {
+            // Show progress message
+            if (this.containerEl) {
+                const photoContainer = this.containerEl.querySelector('.photo-container') as HTMLElement;
+                if (photoContainer) {
+                    photoContainer.empty();
+                    const progressEl = photoContainer.createEl('div', { cls: 'photo-rescan-progress' });
+                    progressEl.createEl('p', { text: 'Scanning vault for imgur photos...' });
+                    const progressText = progressEl.createEl('p', { cls: 'photo-rescan-status' });
+
+                    // Rebuild collection with progress updates
+                    const totalFound = await this.photoCollector.rebuildCollection(
+                        (current, total, found) => {
+                            progressText.setText(`Processed ${current}/${total} files, found ${found} photos`);
+                        }
+                    );
+
+                    progressText.setText(`Scan complete! Found ${totalFound} photos.`);
+
+                    // Wait a moment then refresh
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            }
+
+            // Refresh to show new photo
+            await this.update();
+        } catch (error) {
+            console.error('Photo rescan error:', error);
+            if (this.containerEl) {
+                const photoContainer = this.containerEl.querySelector('.photo-container') as HTMLElement;
+                if (photoContainer) {
+                    photoContainer.empty();
+                    photoContainer.createEl('p', {
+                        text: `Error rescanning vault: ${error instanceof Error ? error.message : String(error)}`,
+                        cls: 'photo-error'
+                    });
+                }
+            }
+        }
     }
 
     private renderPhoto(container: HTMLElement, photo: PhotoData): void {

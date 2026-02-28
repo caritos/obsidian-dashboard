@@ -55,10 +55,16 @@ export default class DashboardPlugin extends Plugin {
 
         // Register Photo Widget
         this.widgetRegistry.register('photo', (settings: WidgetSettings) => {
-            const photoCollector = new PhotoCollector(this.app.vault, this.app.metadataCache);
-            return new PhotoWidget(this.app, photoCollector, settings as WidgetSettings & {
+            const photoSettings = settings as WidgetSettings & {
                 refreshInterval: number;
-            });
+                collectionFilePath: string;
+            };
+            const photoCollector = new PhotoCollector(
+                this.app.vault,
+                this.app.metadataCache,
+                photoSettings.collectionFilePath
+            );
+            return new PhotoWidget(this.app, photoCollector, photoSettings);
         });
 
         // Register view

@@ -229,6 +229,17 @@ export class DashboardSettingsTab extends PluginSettingTab {
             const photoSettings = this.plugin.settings.widgetSettings['photo'];
 
             new Setting(containerEl)
+                .setName('Collection file path')
+                .setDesc('Path to file where photo URLs are stored')
+                .addText(text => text
+                    .setPlaceholder('resources/random-photo-collection.md')
+                    .setValue((photoSettings?.collectionFilePath as string) || 'resources/random-photo-collection.md')
+                    .onChange(async (value) => {
+                        photoSettings.collectionFilePath = value;
+                        await this.plugin.saveSettings();
+                    }));
+
+            new Setting(containerEl)
                 .setName('Auto-refresh interval')
                 .setDesc('Seconds between automatic photo changes')
                 .addSlider(slider => slider

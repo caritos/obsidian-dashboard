@@ -49,7 +49,8 @@ export const DEFAULT_SETTINGS: DashboardSettings = {
             resourcesPath: 'resources'
         },
         'photo': {
-            refreshInterval: 300
+            refreshInterval: 300,
+            collectionFilePath: 'resources/random-photo-collection.md'
         }
     }
 };

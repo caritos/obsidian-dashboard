@@ -433,7 +433,13 @@
     justify-content: space-between;
 }
 
-.photo-refresh-button {
+.photo-button-container {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.photo-refresh-button,
+.photo-rescan-button {
     background: var(--background-secondary);
     border: 1px solid var(--background-modifier-border);
     border-radius: 4px;
@@ -451,6 +457,15 @@
 
 .photo-refresh-button:active {
     transform: rotate(180deg) scale(0.95);
+}
+
+.photo-rescan-button:hover {
+    background: var(--background-modifier-hover);
+    transform: scale(1.1);
+}
+
+.photo-rescan-button:active {
+    transform: scale(0.95);
 }
 
 .photo-container {
@@ -503,4 +518,17 @@
     color: var(--text-muted);
     background: var(--background-secondary);
     border-radius: 8px;
+}
+
+.photo-rescan-progress {
+    padding: 2rem;
+    text-align: center;
+    background: var(--background-secondary);
+    border-radius: 8px;
+}
+
+.photo-rescan-status {
+    color: var(--text-accent);
+    font-weight: 500;
+    margin-top: 0.5rem;
 }

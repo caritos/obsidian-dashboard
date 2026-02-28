@@ -9,6 +9,8 @@ import { DataCollector } from './services/DataCollector';
 import { MocDataCollector } from './services/MocDataCollector';
 import { MocTrendingWidget } from './widgets/MocTrendingWidget';
 import { WeatherWidget } from './widgets/WeatherWidget';
+import { PhotoWidget } from './widgets/PhotoWidget';
+import { PhotoCollector } from './services/PhotoCollector';
 
 export default class DashboardPlugin extends Plugin {
     settings: DashboardSettings;
@@ -49,6 +51,14 @@ export default class DashboardPlugin extends Plugin {
         // Register Weather Widget
         this.widgetRegistry.register('weather', (settings: WidgetSettings) => {
             return new WeatherWidget(this.app, settings);
+        });
+
+        // Register Photo Widget
+        this.widgetRegistry.register('photo', (settings: WidgetSettings) => {
+            const photoCollector = new PhotoCollector(this.app.vault, this.app.metadataCache);
+            return new PhotoWidget(this.app, photoCollector, settings as WidgetSettings & {
+                refreshInterval: number;
+            });
         });
 
         // Register view

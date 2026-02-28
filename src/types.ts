@@ -10,8 +10,8 @@ export interface WidgetSettings {
 }
 
 export const DEFAULT_SETTINGS: DashboardSettings = {
-    enabledWidgets: ['weather', 'activity-heatmap', 'stats', 'moc-trending'],
-    widgetOrder: ['weather', 'activity-heatmap', 'stats', 'moc-trending'],
+    enabledWidgets: ['photo', 'weather', 'activity-heatmap', 'stats', 'moc-trending'],
+    widgetOrder: ['photo', 'weather', 'activity-heatmap', 'stats', 'moc-trending'],
     autoRefresh: true,
     widgetSettings: {
         'weather': {
@@ -47,6 +47,9 @@ export const DEFAULT_SETTINGS: DashboardSettings = {
             },
             mocBasePath: 'moc',
             resourcesPath: 'resources'
+        },
+        'photo': {
+            refreshInterval: 300
         }
     }
 };

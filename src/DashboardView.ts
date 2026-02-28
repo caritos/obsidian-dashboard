@@ -33,10 +33,6 @@ export class DashboardView extends ItemView {
         container.empty();
         container.addClass('dashboard-view');
 
-        // Create header
-        const header = container.createEl('div', { cls: 'dashboard-header' });
-        header.createEl('h2', { text: 'Dashboard' });
-
         // Create widgets container
         const widgetsContainer = container.createEl('div', { cls: 'dashboard-widgets' });
 

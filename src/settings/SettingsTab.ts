@@ -106,6 +106,26 @@ export class DashboardSettingsTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                 }));
 
+        new Setting(containerEl)
+            .setName('Random photo')
+            .setDesc('Show random photos from imgur links in your vault')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.enabledWidgets.includes('photo'))
+                .onChange(async (value) => {
+                    if (value) {
+                        if (!this.plugin.settings.enabledWidgets.includes('photo')) {
+                            this.plugin.settings.enabledWidgets.push('photo');
+                        }
+                    } else {
+                        const index = this.plugin.settings.enabledWidgets.indexOf('photo');
+                        if (index > -1) {
+                            this.plugin.settings.enabledWidgets.splice(index, 1);
+                        }
+                    }
+                    await this.plugin.saveSettings();
+                    this.display();
+                }));
+
         // Weather Settings
         if (this.plugin.settings.enabledWidgets.includes('weather')) {
             new Setting(containerEl)
@@ -198,6 +218,27 @@ export class DashboardSettingsTab extends PluginSettingTab {
                             await this.plugin.saveSettings();
                         }));
             });
+        }
+
+        // Photo Settings
+        if (this.plugin.settings.enabledWidgets.includes('photo')) {
+            new Setting(containerEl)
+                .setName('Random photo')
+                .setHeading();
+
+            const photoSettings = this.plugin.settings.widgetSettings['photo'];
+
+            new Setting(containerEl)
+                .setName('Auto-refresh interval')
+                .setDesc('Seconds between automatic photo changes')
+                .addSlider(slider => slider
+                    .setLimits(60, 600, 30)
+                    .setValue((photoSettings?.refreshInterval as number) || 300)
+                    .setDynamicTooltip()
+                    .onChange(async (value) => {
+                        photoSettings.refreshInterval = value;
+                        await this.plugin.saveSettings();
+                    }));
         }
 
         // Activity Heatmap Settings

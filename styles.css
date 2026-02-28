@@ -85,29 +85,42 @@
     font-size: 9px;
 }
 
-/* Theme-adaptive colors */
+/* Vibrant activity level colors */
 .heatmap-level-0 {
     fill: var(--background-secondary);
 }
 
 .heatmap-level-1 {
-    fill: var(--interactive-accent);
-    opacity: 0.4;
+    fill: #3b82f6; /* Blue - low activity */
 }
 
 .heatmap-level-2 {
-    fill: var(--interactive-accent);
-    opacity: 0.6;
+    fill: #10b981; /* Green - moderate activity */
 }
 
 .heatmap-level-3 {
-    fill: var(--interactive-accent);
-    opacity: 0.8;
+    fill: #f59e0b; /* Orange - high activity */
 }
 
 .heatmap-level-4 {
-    fill: var(--interactive-accent);
-    opacity: 1;
+    fill: #ef4444; /* Red - very high activity */
+}
+
+/* Dark theme adjustments */
+.theme-dark .heatmap-level-1 {
+    fill: #60a5fa; /* Lighter blue for dark theme */
+}
+
+.theme-dark .heatmap-level-2 {
+    fill: #34d399; /* Lighter green for dark theme */
+}
+
+.theme-dark .heatmap-level-3 {
+    fill: #fbbf24; /* Lighter orange for dark theme */
+}
+
+.theme-dark .heatmap-level-4 {
+    fill: #f87171; /* Lighter red for dark theme */
 }
 
 /* Note List Modal */

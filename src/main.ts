@@ -19,7 +19,7 @@ export default class DashboardPlugin extends Plugin {
         await this.loadSettings();
 
         // Initialize data collector
-        this.dataCollector = new DataCollector(this.app.vault);
+        this.dataCollector = new DataCollector(this.app.vault, this.app.metadataCache);
 
         // Initialize widget registry
         this.widgetRegistry = new WidgetRegistry();
@@ -123,7 +123,33 @@ export default class DashboardPlugin extends Plugin {
     }
 
     async loadSettings() {
-        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+        const loadedData = await this.loadData();
+        this.settings = this.deepMerge(DEFAULT_SETTINGS, loadedData || {});
+    }
+
+    private deepMerge(target: DashboardSettings, source: Partial<DashboardSettings>): DashboardSettings {
+        const result: DashboardSettings = JSON.parse(JSON.stringify(target));
+
+        if (!source) return result;
+
+        // Merge top-level arrays
+        if (source.enabledWidgets) result.enabledWidgets = [...source.enabledWidgets];
+        if (source.widgetOrder) result.widgetOrder = [...source.widgetOrder];
+        if (typeof source.autoRefresh === 'boolean') result.autoRefresh = source.autoRefresh;
+
+        // Deep merge widgetSettings
+        if (source.widgetSettings) {
+            for (const widgetId in source.widgetSettings) {
+                if (source.widgetSettings.hasOwnProperty(widgetId)) {
+                    result.widgetSettings[widgetId] = {
+                        ...result.widgetSettings[widgetId],
+                        ...source.widgetSettings[widgetId]
+                    };
+                }
+            }
+        }
+
+        return result;
     }
 
     async saveSettings() {

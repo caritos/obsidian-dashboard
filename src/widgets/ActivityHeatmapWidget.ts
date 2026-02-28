@@ -48,9 +48,12 @@ export class ActivityHeatmapWidget extends Widget {
 
     update(): Promise<void> {
         const settings = this.settings as ActivityHeatmapSettings;
+        console.log('[ActivityHeatmap] Settings:', settings);
+        console.log('[ActivityHeatmap] Days to show:', settings.days);
 
         try {
             this.activityData = this.dataCollector!.collectActivityData(settings.days);
+            console.log('[ActivityHeatmap] Activity data collected, dailyActivity size:', this.activityData.dailyActivity.size);
 
             // Convert to heatmap cells
             const cells: HeatmapCell[] = [];
@@ -80,6 +83,9 @@ export class ActivityHeatmapWidget extends Widget {
 
                 cells.push({ date: dateString, count });
             }
+
+            console.log('[ActivityHeatmap] Total cells to render:', cells.length);
+            console.log('[ActivityHeatmap] Date range:', cells[0]?.date, 'to', cells[cells.length - 1]?.date);
 
             // Render heatmap
             if (!this.containerEl) return Promise.resolve();

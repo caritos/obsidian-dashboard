@@ -293,7 +293,7 @@ export class MocDataCollector {
             }
 
             return null;
-        } catch (error) {
+        } catch {
             // Silently fail and fall back to null
             return null;
         }

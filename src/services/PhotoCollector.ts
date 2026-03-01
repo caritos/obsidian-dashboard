@@ -1,4 +1,4 @@
-import { Vault, MetadataCache, TFile, TAbstractFile } from 'obsidian';
+import { Vault, MetadataCache, TFile } from 'obsidian';
 
 export interface PhotoData {
     url: string;
@@ -28,18 +28,18 @@ export class PhotoCollector {
 
         // Return cached data if still valid
         if (this.cache && (now - this.cacheTimestamp < this.cacheDuration)) {
-            console.log(`PhotoCollector: Using cached photos (${this.cache.length} photos)`);
+            console.debug(`PhotoCollector: Using cached photos (${this.cache.length} photos)`);
             return this.cache;
         }
 
-        console.log(`PhotoCollector: Reading from collection file: ${this.collectionFilePath}`);
+        console.debug(`PhotoCollector: Reading from collection file: ${this.collectionFilePath}`);
         const photos = await this.readCollectionFile();
 
         // Update cache
         this.cache = photos;
         this.cacheTimestamp = now;
 
-        console.log(`PhotoCollector: Loaded ${photos.length} photos from collection file`);
+        console.debug(`PhotoCollector: Loaded ${photos.length} photos from collection file`);
         return photos;
     }
 
@@ -50,7 +50,7 @@ export class PhotoCollector {
         const file = this.vault.getAbstractFileByPath(this.collectionFilePath);
 
         if (!file || !(file instanceof TFile)) {
-            console.log('PhotoCollector: Collection file not found, returning empty array');
+            console.debug('PhotoCollector: Collection file not found, returning empty array');
             return [];
         }
 
@@ -76,14 +76,14 @@ export class PhotoCollector {
      * Scans the entire vault and updates the collection file
      */
     async rebuildCollection(onProgress?: (current: number, total: number, found: number) => void): Promise<number> {
-        console.log('PhotoCollector: Starting full vault scan...');
+        console.debug('PhotoCollector: Starting full vault scan...');
         const startTime = Date.now();
         const photos: PhotoData[] = [];
         const files = this.vault.getMarkdownFiles();
 
         // Exclude the collection file itself
         const filesToScan = files.filter(f => f.path !== this.collectionFilePath);
-        console.log(`PhotoCollector: Found ${filesToScan.length} markdown files to scan`);
+        console.debug(`PhotoCollector: Found ${filesToScan.length} markdown files to scan`);
 
         // Process files in batches to avoid blocking UI
         const batchSize = 50;
@@ -116,7 +116,7 @@ export class PhotoCollector {
         }
 
         const scanTime = Date.now() - startTime;
-        console.log(`PhotoCollector: Scan complete! Found ${photos.length} imgur photos in ${scanTime}ms`);
+        console.debug(`PhotoCollector: Scan complete! Found ${photos.length} imgur photos in ${scanTime}ms`);
 
         // Write to collection file
         await this.writeCollectionFile(photos);
@@ -160,7 +160,7 @@ export class PhotoCollector {
             await this.vault.create(this.collectionFilePath, content);
         }
 
-        console.log(`PhotoCollector: Wrote ${photos.length} photos to ${this.collectionFilePath}`);
+        console.debug(`PhotoCollector: Wrote ${photos.length} photos to ${this.collectionFilePath}`);
     }
 
     /**

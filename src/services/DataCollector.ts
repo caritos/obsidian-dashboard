@@ -306,7 +306,7 @@ export class DataCollector {
             }
 
             return null;
-        } catch (error) {
+        } catch {
             // Silently fail and fall back to filesystem timestamps
             return null;
         }

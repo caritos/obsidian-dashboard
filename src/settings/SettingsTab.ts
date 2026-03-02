@@ -108,7 +108,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Random photo')
-            .setDesc('Show random photos from imgur links in your vault')
+            .setDesc('Show random photos from Imgur links in your vault')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.enabledWidgets.includes('photo'))
                 .onChange(async (value) => {
@@ -138,7 +138,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
                 .setName('Location file path')
                 .setDesc('Path to Markdown file with location coordinates')
                 .addText(text => text
-                    .setPlaceholder('resources/current-location.md')
+                    .setPlaceholder('Resources/current-location.md')
                     .setValue(weatherSettings.locationFilePath || 'resources/current-location.md')
                     .onChange(async (value) => {
                         weatherSettings.locationFilePath = value;
@@ -232,7 +232,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
                 .setName('Collection file path')
                 .setDesc('Path to file where photo URLs are stored')
                 .addText(text => text
-                    .setPlaceholder('resources/random-photo-collection.md')
+                    .setPlaceholder('Resources/random-photo-collection.md')
                     .setValue((photoSettings?.collectionFilePath as string) || 'resources/random-photo-collection.md')
                     .onChange(async (value) => {
                         photoSettings.collectionFilePath = value;
@@ -321,11 +321,11 @@ export class DashboardSettingsTab extends PluginSettingTab {
                 .setName('Time window')
                 .setDesc('Number of days to look back for trending activity')
                 .addDropdown(dropdown => dropdown
-                    .addOption('7', '7 days')
-                    .addOption('14', '14 days')
-                    .addOption('30', '30 days')
-                    .addOption('60', '60 days')
-                    .addOption('90', '90 days')
+                    .addOption('7', '7 Days')
+                    .addOption('14', '14 Days')
+                    .addOption('30', '30 Days')
+                    .addOption('60', '60 Days')
+                    .addOption('90', '90 Days')
                     .setValue(String(mocSettings.timeWindow || 7))
                     .onChange(async (value) => {
                         mocSettings.timeWindow = parseInt(value);

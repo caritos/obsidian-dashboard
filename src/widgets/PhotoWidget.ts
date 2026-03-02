@@ -112,7 +112,7 @@ export class PhotoWidget extends Widget {
                 if (photoContainer) {
                     photoContainer.empty();
                     const progressEl = photoContainer.createEl('div', { cls: 'photo-rescan-progress' });
-                    progressEl.createEl('p', { text: 'Scanning vault for imgur photos...' });
+                    progressEl.createEl('p', { text: 'Scanning vault for Imgur photos...' });
                     const progressText = progressEl.createEl('p', { cls: 'photo-rescan-status' });
 
                     // Rebuild collection with progress updates
@@ -151,7 +151,7 @@ export class PhotoWidget extends Widget {
 
         if (!photo) {
             container.createEl('p', {
-                text: 'No imgur photos found in vault',
+                text: 'No Imgur photos found in vault',
                 cls: 'photo-empty'
             });
             return;

@@ -63,7 +63,7 @@ export class MocTrendingModal extends Modal {
         } else if (diffDays === 1) {
             return 'Yesterday';
         } else if (diffDays < 7) {
-            return `${diffDays} Days ago`;
+            return `${diffDays} days ago`;
         } else {
             return date.toLocaleDateString();
         }

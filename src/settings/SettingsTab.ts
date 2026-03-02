@@ -321,11 +321,11 @@ export class DashboardSettingsTab extends PluginSettingTab {
                 .setName('Time window')
                 .setDesc('Number of days to look back for trending activity')
                 .addDropdown(dropdown => dropdown
-                    .addOption('7', '7 Days')
-                    .addOption('14', '14 Days')
-                    .addOption('30', '30 Days')
-                    .addOption('60', '60 Days')
-                    .addOption('90', '90 Days')
+                    .addOption('7', '7 days')
+                    .addOption('14', '14 days')
+                    .addOption('30', '30 days')
+                    .addOption('60', '60 days')
+                    .addOption('90', '90 days')
                     .setValue(String(mocSettings.timeWindow || 7))
                     .onChange(async (value) => {
                         mocSettings.timeWindow = parseInt(value);

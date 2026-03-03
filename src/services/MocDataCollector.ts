@@ -229,8 +229,22 @@ export class MocDataCollector {
         const categoryDir = categoryDirMap[category];
         const prefix = category === 'what' ? '%' : category === 'where' ? '+' : category === 'who' ? '~' : '@';
 
-        // For "when" category, search in subdirectories (year, month, week, day)
+        // For "when" category, search in root directory first, then subdirectories
         if (category === 'when') {
+            // First check root when (@) directory
+            const rootPatterns = [
+                normalizePath(`${settings.mocBasePath}/${categoryDir}/${prefix}${mocName}.md`),
+                normalizePath(`${settings.mocBasePath}/${categoryDir}/${mocName}.md`)
+            ];
+
+            for (const pattern of rootPatterns) {
+                const file = this.vault.getAbstractFileByPath(pattern);
+                if (file instanceof TFile) {
+                    return file;
+                }
+            }
+
+            // Fall back to subdirectories (year, month, week, day)
             const subdirs = ['year', 'month', 'week', 'day'];
             for (const subdir of subdirs) {
                 const patterns = [

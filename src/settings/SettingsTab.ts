@@ -108,7 +108,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Random photo')
-            .setDesc('Show random photos from Imgur links in your vault')
+            .setDesc('Show random photos from image links in your vault')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.enabledWidgets.includes('photo'))
                 .onChange(async (value) => {
@@ -147,7 +147,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
 
             new Setting(containerEl)
                 .setName('Temperature unit')
-                .setDesc('Display temperature in Celsius or Fahrenheit')
+                .setDesc('Display temperature in celsius or fahrenheit')
                 .addDropdown(dropdown => dropdown
                     .addOption('celsius', 'Celsius')
                     .addOption('fahrenheit', 'Fahrenheit')
@@ -230,7 +230,7 @@ export class DashboardSettingsTab extends PluginSettingTab {
 
             new Setting(containerEl)
                 .setName('Collection file path')
-                .setDesc('Path to file where photo URLs are stored')
+                .setDesc('Path to file where photo urls are stored')
                 .addText(text => text
                     .setPlaceholder('Resources/random-photo-collection.md')
                     .setValue((photoSettings?.collectionFilePath as string) || 'resources/random-photo-collection.md')

@@ -5,7 +5,7 @@ export class DataCollector {
     private vault: Vault;
     private metadataCache: MetadataCache;
     private cache: ActivityData | null = null;
-    private cacheTime: number = 0;
+    private cacheTime = 0;
     private readonly CACHE_TTL = 60000; // 1 minute
 
     constructor(vault: Vault, metadataCache: MetadataCache) {
@@ -13,7 +13,7 @@ export class DataCollector {
         this.metadataCache = metadataCache;
     }
 
-    collectActivityData(days: number = 365): ActivityData {
+    collectActivityData(days = 365): ActivityData {
         // Check cache
         const now = Date.now();
         const cacheAge = now - this.cacheTime;
@@ -69,13 +69,15 @@ export class DataCollector {
 
                 // Track creation using frontmatter date
                 if (this.isInRange(createdTimestamp, startDate, endDate)) {
-                    if (!dailyActivity.has(createdDate)) {
-                        dailyActivity.set(createdDate, {
+                    let dayData = dailyActivity.get(createdDate);
+                    if (!dayData) {
+                        dayData = {
                             created: new Set(),
                             modified: new Set()
-                        });
+                        };
+                        dailyActivity.set(createdDate, dayData);
                     }
-                    dailyActivity.get(createdDate)!.created.add(file);
+                    dayData.created.add(file);
                     addedToRange = true;
                 }
 
@@ -118,7 +120,7 @@ export class DataCollector {
         return activityData;
     }
 
-    calculateStreaks(activityData: ActivityData, minNotes: number = 1): StreakData {
+    calculateStreaks(activityData: ActivityData, minNotes = 1): StreakData {
         const sortedDates = Array.from(activityData.dailyActivity.keys()).sort();
 
         console.debug('[Streaks] Total unique dates with activity:', sortedDates.length);
@@ -132,7 +134,7 @@ export class DataCollector {
         let longestEnd: string | null = null;
 
         const today = this.getDateString(Date.now());
-        let previousDate = this.getPreviousDate(today);
+        const previousDate = this.getPreviousDate(today);
 
         console.debug('[Streaks] Today:', today, 'Has activity today:', activityData.dailyActivity.has(today));
         console.debug('[Streaks] Yesterday:', previousDate, 'Has activity yesterday:', activityData.dailyActivity.has(previousDate));
@@ -146,6 +148,7 @@ export class DataCollector {
         } else {
             // Calculate current streak going backwards from today
             let checkDate = today;
+            // eslint-disable-next-line no-constant-condition
             while (true) {
                 const activity = activityData.dailyActivity.get(checkDate);
 
@@ -176,7 +179,8 @@ export class DataCollector {
 
         for (let i = 0; i < sortedDates.length; i++) {
             const date = sortedDates[i];
-            const activity = activityData.dailyActivity.get(date)!;
+            const activity = activityData.dailyActivity.get(date);
+            if (!activity) continue; // Skip if no activity (shouldn't happen since sortedDates is from the map keys)
             const noteCount = activity.created.size + activity.modified.size;
 
             if (noteCount >= minNotes) {

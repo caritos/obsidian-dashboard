@@ -11,7 +11,7 @@ export class PhotoCollector {
     private metadataCache: MetadataCache;
     private collectionFilePath: string;
     private cache: PhotoData[] | null = null;
-    private cacheTimestamp: number = 0;
+    private cacheTimestamp = 0;
     private readonly cacheDuration: number = 300000; // 5 minutes
 
     constructor(vault: Vault, metadataCache: MetadataCache, collectionFilePath: string) {

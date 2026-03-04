@@ -131,7 +131,7 @@ export class HeatmapRenderer {
         });
     }
 
-    private getColorLevel(count: number, max: number): number {
+    private getColorLevel(count: number, _max: number): number {
         if (count === 0) return 0;
 
         // Use absolute thresholds for better visibility

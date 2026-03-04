@@ -103,9 +103,6 @@ export default class DashboardPlugin extends Plugin {
         this.addSettingTab(new DashboardSettingsTab(this.app, this));
     }
 
-    onunload() {
-    }
-
     async activateView() {
         const { workspace } = this.app;
 

@@ -52,7 +52,10 @@ export class ActivityHeatmapWidget extends Widget {
         console.debug('[ActivityHeatmap] Days to show:', settings.days);
 
         try {
-            this.activityData = this.dataCollector!.collectActivityData(settings.days);
+            if (!this.dataCollector) {
+                throw new Error('DataCollector not initialized');
+            }
+            this.activityData = this.dataCollector.collectActivityData(settings.days);
             console.debug('[ActivityHeatmap] Activity data collected, dailyActivity size:', this.activityData.dailyActivity.size);
 
             // Convert to heatmap cells

@@ -16,7 +16,7 @@ export class MocDataCollector {
     private vault: Vault;
     private metadataCache: MetadataCache;
     private cache: Map<MocCategory, MocTrendingData[]> | null = null;
-    private cacheTime: number = 0;
+    private cacheTime = 0;
     private readonly CACHE_TTL = 60000; // 1 minute
 
     constructor(vault: Vault, metadataCache: MetadataCache) {
@@ -154,10 +154,12 @@ export class MocDataCollector {
         const mocMap = new Map<string, MocReference[]>();
 
         for (const ref of references) {
-            if (!mocMap.has(ref.mocName)) {
-                mocMap.set(ref.mocName, []);
+            let mocRefs = mocMap.get(ref.mocName);
+            if (!mocRefs) {
+                mocRefs = [];
+                mocMap.set(ref.mocName, mocRefs);
             }
-            mocMap.get(ref.mocName)!.push(ref);
+            mocRefs.push(ref);
         }
 
         // Calculate scores for each MOC

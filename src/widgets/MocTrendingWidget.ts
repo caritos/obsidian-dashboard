@@ -84,9 +84,10 @@ export class MocTrendingWidget extends Widget {
         });
 
         if (moc.mocFile) {
+            const mocFilePath = moc.mocFile.path;
             nameEl.addEventListener('click', (e) => {
                 e.preventDefault();
-                void this.app.workspace.openLinkText(moc.mocFile!.path, '', false);
+                void this.app.workspace.openLinkText(mocFilePath, '', false);
             });
         } else {
             nameEl.addClass('moc-trending-missing');

@@ -40,8 +40,8 @@ export class WeatherService {
         location?: string
     ): Promise<WeatherData> {
         // Check cache
-        if (this.isCacheValid(latitude, longitude, settings.cacheDuration)) {
-            return this.cache!.data;
+        if (this.isCacheValid(latitude, longitude, settings.cacheDuration) && this.cache) {
+            return this.cache.data;
         }
 
         // Prevent concurrent requests

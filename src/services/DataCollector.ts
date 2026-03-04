@@ -148,16 +148,10 @@ export class DataCollector {
         } else {
             // Calculate current streak going backwards from today
             let checkDate = today;
+            let activity = activityData.dailyActivity.get(checkDate);
+
             // Loop backwards through dates until streak breaks (no activity or insufficient notes)
-            // eslint-disable-next-line no-constant-condition -- Intentional infinite loop with break conditions inside
-            while (true) {
-                const activity = activityData.dailyActivity.get(checkDate);
-
-                // If no activity on this date, streak is broken
-                if (!activity) {
-                    break;
-                }
-
+            while (activity) {
                 const noteCount = activity.created.size + activity.modified.size;
 
                 if (noteCount >= minNotes) {
@@ -166,6 +160,7 @@ export class DataCollector {
                     }
                     currentStreak++;
                     checkDate = this.getPreviousDate(checkDate);
+                    activity = activityData.dailyActivity.get(checkDate);
                 } else {
                     // Activity exists but doesn't meet minNotes threshold
                     break;

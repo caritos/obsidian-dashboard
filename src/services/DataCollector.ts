@@ -148,7 +148,8 @@ export class DataCollector {
         } else {
             // Calculate current streak going backwards from today
             let checkDate = today;
-            // eslint-disable-next-line no-constant-condition
+            // Loop backwards through dates until streak breaks (no activity or insufficient notes)
+            // eslint-disable-next-line no-constant-condition -- Intentional infinite loop with break conditions inside
             while (true) {
                 const activity = activityData.dailyActivity.get(checkDate);
 

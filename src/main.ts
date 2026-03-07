@@ -11,6 +11,8 @@ import { MocTrendingWidget } from './widgets/MocTrendingWidget';
 import { WeatherWidget } from './widgets/WeatherWidget';
 import { PhotoWidget } from './widgets/PhotoWidget';
 import { PhotoCollector } from './services/PhotoCollector';
+import { LatestNotesWidget } from './widgets/LatestNotesWidget';
+import { LatestPhotosWidget } from './widgets/LatestPhotosWidget';
 
 export default class DashboardPlugin extends Plugin {
     settings: DashboardSettings;
@@ -67,10 +69,24 @@ export default class DashboardPlugin extends Plugin {
             return new PhotoWidget(this.app, photoCollector, photoSettings);
         });
 
+        // Register Latest Notes Widget
+        this.widgetRegistry.register('latest-notes', (settings: WidgetSettings) => {
+            return new LatestNotesWidget(this.app, settings as WidgetSettings & {
+                maxNotes: number;
+            });
+        });
+
+        // Register Latest Photos Widget
+        this.widgetRegistry.register('latest-photos', (settings: WidgetSettings) => {
+            return new LatestPhotosWidget(this.app, settings as WidgetSettings & {
+                maxPhotos: number;
+            });
+        });
+
         // Register view
         this.registerView(
             VIEW_TYPE_DASHBOARD,
-            (leaf) => new DashboardView(leaf, this.widgetRegistry, this.settings)
+            (leaf) => new DashboardView(leaf, this.widgetRegistry, this.settings, this)
         );
 
         // Register command to open dashboard
@@ -148,6 +164,7 @@ export default class DashboardPlugin extends Plugin {
         // Merge top-level arrays
         if (source.enabledWidgets) result.enabledWidgets = [...source.enabledWidgets];
         if (source.widgetOrder) result.widgetOrder = [...source.widgetOrder];
+        if (source.collapsedWidgets) result.collapsedWidgets = [...source.collapsedWidgets];
         if (typeof source.autoRefresh === 'boolean') result.autoRefresh = source.autoRefresh;
 
         // Deep merge widgetSettings

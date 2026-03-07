@@ -39,6 +39,47 @@
     font-size: 1.1em;
 }
 
+/* Collapsible Widget Header */
+.widget-header.collapsible {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    margin: -8px -12px 15px -12px;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.widget-header.collapsible:hover {
+    background: var(--background-modifier-hover);
+}
+
+.widget-header.collapsible h3 {
+    flex: 1;
+}
+
+.widget-collapse-toggle {
+    font-size: 0.9em;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+
+/* Collapsed state */
+.dashboard-widget-container.collapsed {
+    padding-bottom: 8px;
+}
+
+.dashboard-widget-container.collapsed .widget-header {
+    margin-bottom: 0;
+}
+
+.dashboard-widget-container.collapsed > *:not(.widget-header) {
+    display: none;
+}
+
 /* Heatmap */
 .heatmap-container {
     display: flex;
@@ -428,9 +469,7 @@
 
 /* Photo Widget */
 .photo-widget-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    /* Flex layout is handled by .collapsible class */
 }
 
 .photo-button-container {
@@ -531,4 +570,183 @@
     color: var(--text-accent);
     font-weight: 500;
     margin-top: 0.5rem;
+}
+
+/* Latest Notes Widget */
+.latest-notes-container {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.latest-notes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.latest-note-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--background-secondary);
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.latest-note-item:hover {
+    background: var(--background-modifier-hover);
+}
+
+.latest-note-title {
+    font-weight: 500;
+    color: var(--text-normal);
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.latest-note-title:hover {
+    color: var(--text-accent);
+    text-decoration: underline;
+}
+
+.latest-note-what {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.latest-note-what-tag {
+    padding: 0.25rem 0.5rem;
+    background: var(--interactive-accent);
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: var(--text-on-accent);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.latest-note-what-tag:hover {
+    opacity: 0.8;
+    transform: translateY(-1px);
+}
+
+.latest-note-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.latest-note-tag {
+    padding: 0.25rem 0.5rem;
+    background: var(--background-primary);
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.latest-note-tag:hover {
+    background: var(--background-modifier-hover);
+    color: var(--text-accent);
+}
+
+.latest-note-date {
+    font-size: 0.8rem;
+    color: var(--text-faint);
+}
+
+.latest-notes-empty {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+/* Latest Photos Widget */
+.latest-photos-container {
+    max-height: 800px;
+    overflow-y: auto;
+}
+
+.latest-photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.latest-photo-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: var(--background-secondary);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.latest-photo-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.latest-photo-link {
+    cursor: pointer;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--background-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.latest-photo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.latest-photo-img.latest-photo-loaded {
+    opacity: 1;
+}
+
+.latest-photo-error-text {
+    font-size: 2rem;
+    color: var(--text-muted);
+}
+
+.latest-photo-caption {
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.latest-photo-source {
+    font-size: 0.9rem;
+    color: var(--text-normal);
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.latest-photo-source:hover {
+    color: var(--text-accent);
+    text-decoration: underline;
+}
+
+.latest-photo-date {
+    font-size: 0.75rem;
+    color: var(--text-faint);
+}
+
+.latest-photos-empty {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-muted);
 }

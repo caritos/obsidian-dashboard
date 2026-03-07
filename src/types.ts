@@ -3,6 +3,7 @@ export interface DashboardSettings {
     widgetOrder: string[];
     autoRefresh: boolean;
     widgetSettings: Record<string, WidgetSettings>;
+    collapsedWidgets: string[];
 }
 
 export interface WidgetSettings {
@@ -10,9 +11,10 @@ export interface WidgetSettings {
 }
 
 export const DEFAULT_SETTINGS: DashboardSettings = {
-    enabledWidgets: ['photo', 'weather', 'activity-heatmap', 'stats', 'moc-trending'],
-    widgetOrder: ['photo', 'weather', 'activity-heatmap', 'stats', 'moc-trending'],
+    enabledWidgets: ['photo', 'weather', 'activity-heatmap', 'stats', 'moc-trending', 'latest-notes', 'latest-photos'],
+    widgetOrder: ['photo', 'weather', 'activity-heatmap', 'stats', 'moc-trending', 'latest-notes', 'latest-photos'],
     autoRefresh: true,
+    collapsedWidgets: [],
     widgetSettings: {
         'weather': {
             locationFilePath: 'resources/current-location.md',
@@ -51,6 +53,12 @@ export const DEFAULT_SETTINGS: DashboardSettings = {
         'photo': {
             refreshInterval: 300,
             collectionFilePath: 'resources/random-photo-collection.md'
+        },
+        'latest-notes': {
+            maxNotes: 100
+        },
+        'latest-photos': {
+            maxPhotos: 100
         }
     }
 };

@@ -115,7 +115,7 @@ export class DashboardView extends ItemView {
         header.insertBefore(toggleBtn, header.firstChild);
 
         // Handle click on header to toggle
-        header.addEventListener('click', async (e) => {
+        header.addEventListener('click', (e) => {
             // Don't collapse if clicking on buttons inside header
             const target = e.target as HTMLElement;
             if (target.tagName === 'BUTTON' || target.closest('button')) {
@@ -136,7 +136,7 @@ export class DashboardView extends ItemView {
                 }
             }
 
-            await this.plugin.saveSettings();
+            void this.plugin.saveSettings();
         });
     }
 }

@@ -61,6 +61,8 @@ export class LatestNotesWidget extends Widget {
         // Build note info with tags and what
         this.notes = [];
         for (const file of sortedFiles) {
+            // Ensure file is cached before reading metadata
+            await this.app.vault.cachedRead(file);
             const cache = this.app.metadataCache.getFileCache(file);
             const tags: string[] = [];
             const what: string[] = [];
@@ -152,9 +154,9 @@ export class LatestNotesWidget extends Widget {
                 text: note.title
             });
 
-            titleEl.addEventListener('click', async (e) => {
+            titleEl.addEventListener('click', (e) => {
                 e.preventDefault();
-                await this.app.workspace.getLeaf(false).openFile(note.file);
+                void this.app.workspace.getLeaf(false).openFile(note.file);
             });
 
             // Create what container (subject matter)

@@ -179,7 +179,7 @@ export class PhotoCollector {
             }
 
             // Match plain URLs: https://imgur.com/... or https://i.imgur.com/...
-            const plainUrlRegex = /https?:\/\/(?:i\.)?imgur\.com\/\S+/g;
+            const plainUrlRegex = /https?:\/\/(?:i\.)?imgur\.com\/[^\s)]+/g;
             while ((match = plainUrlRegex.exec(content)) !== null) {
                 // Avoid duplicates from markdown syntax
                 if (!urls.includes(match[0])) {

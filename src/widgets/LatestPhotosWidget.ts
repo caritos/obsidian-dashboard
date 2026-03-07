@@ -58,6 +58,7 @@ export class LatestPhotosWidget extends Widget {
 
         // Extract imgur photos from files
         this.photos = [];
+        const seenUrls = new Set<string>();
         for (const file of sortedFiles) {
             if (this.photos.length >= maxPhotos) {
                 break;
@@ -68,6 +69,12 @@ export class LatestPhotosWidget extends Widget {
                 if (this.photos.length >= maxPhotos) {
                     break;
                 }
+
+                // Skip duplicate URLs
+                if (seenUrls.has(url)) {
+                    continue;
+                }
+                seenUrls.add(url);
 
                 this.photos.push({
                     url,
@@ -96,7 +103,7 @@ export class LatestPhotosWidget extends Widget {
             }
 
             // Match plain URLs: https://imgur.com/... or https://i.imgur.com/...
-            const plainUrlRegex = /https?:\/\/(?:i\.)?imgur\.com\/\S+/g;
+            const plainUrlRegex = /https?:\/\/(?:i\.)?imgur\.com\/[^\s)]+/g;
             while ((match = plainUrlRegex.exec(content)) !== null) {
                 // Avoid duplicates from markdown syntax
                 if (!urls.includes(match[0])) {
@@ -136,8 +143,8 @@ export class LatestPhotosWidget extends Widget {
             // Create clickable wrapper
             const photoLink = photoItem.createEl('div', { cls: 'latest-photo-link' });
 
-            photoLink.addEventListener('click', async () => {
-                await this.app.workspace.getLeaf(false).openFile(photo.file);
+            photoLink.addEventListener('click', () => {
+                void this.app.workspace.getLeaf(false).openFile(photo.file);
             });
 
             // Create image
@@ -169,10 +176,10 @@ export class LatestPhotosWidget extends Widget {
                 text: photo.fileName
             });
 
-            sourceLink.addEventListener('click', async (e) => {
+            sourceLink.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                await this.app.workspace.getLeaf(false).openFile(photo.file);
+                void this.app.workspace.getLeaf(false).openFile(photo.file);
             });
 
             caption.createEl('div', {

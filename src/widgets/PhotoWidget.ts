@@ -44,8 +44,8 @@ export class PhotoWidget extends Widget {
             text: '🔄'
         });
         refreshButton.setAttribute('aria-label', 'Refresh photo');
-        refreshButton.addEventListener('click', () => {
-            void this.update();
+        refreshButton.addEventListener('click', async () => {
+            await this.update();
         });
 
         // Add rescan button
@@ -54,8 +54,8 @@ export class PhotoWidget extends Widget {
             text: '🔍'
         });
         rescanButton.setAttribute('aria-label', 'Rescan vault for photos');
-        rescanButton.addEventListener('click', () => {
-            void this.rescanVault();
+        rescanButton.addEventListener('click', async () => {
+            await this.rescanVault();
         });
 
         // Create photo container
@@ -203,8 +203,8 @@ export class PhotoWidget extends Widget {
         const intervalMs = settings.refreshInterval * 1000;
 
         // Set up new interval
-        this.refreshIntervalId = window.setInterval(() => {
-            void this.update();
+        this.refreshIntervalId = window.setInterval(async () => {
+            await this.update();
         }, intervalMs);
     }
 

@@ -82,9 +82,12 @@ export class PhotoWidget extends Widget {
             // Get a random photo
             this.currentPhoto = await this.photoCollector.getRandomPhoto();
 
-            // Re-render
+            // Update only the photo container (don't re-render entire widget)
             if (this.containerEl) {
-                this.render(this.containerEl);
+                const photoContainer = this.containerEl.querySelector('.photo-container') as HTMLElement;
+                if (photoContainer) {
+                    this.renderPhoto(photoContainer, this.currentPhoto);
+                }
             }
 
             // Set up auto-refresh if enabled
@@ -146,7 +149,7 @@ export class PhotoWidget extends Widget {
         }
     }
 
-    private renderPhoto(container: HTMLElement, photo: PhotoData): void {
+    private renderPhoto(container: HTMLElement, photo: PhotoData | null): void {
         container.empty();
 
         if (!photo) {

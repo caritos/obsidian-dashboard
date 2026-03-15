@@ -45,10 +45,17 @@ export class DataCollector {
         let filesProcessed = 0;
         let filesWithFrontmatter = 0;
         let filesSkipped = 0;
+        let filesAiGenerated = 0;
 
         for (const file of files) {
             try {
                 filesProcessed++;
+
+                // Skip AI-generated files
+                if (this.isAiGenerated(file)) {
+                    filesAiGenerated++;
+                    continue;
+                }
 
                 // Try to extract date from frontmatter "when" field first
                 const frontmatterDate = this.extractDateFromFrontmatter(file);
@@ -99,6 +106,7 @@ export class DataCollector {
         }
 
         console.debug('[DataCollector] Processed', filesProcessed, 'files');
+        console.debug('[DataCollector] Files AI-generated (excluded):', filesAiGenerated);
         console.debug('[DataCollector] Files with frontmatter dates:', filesWithFrontmatter);
         console.debug('[DataCollector] Files skipped (no frontmatter):', filesSkipped);
         console.debug('[DataCollector] Files in date range:', filesInRange);
@@ -309,6 +317,20 @@ export class DataCollector {
         } catch {
             // Silently fail and fall back to filesystem timestamps
             return null;
+        }
+    }
+
+    private isAiGenerated(file: TFile): boolean {
+        try {
+            const metadata = this.metadataCache.getFileCache(file);
+            if (!metadata?.frontmatter) {
+                return false;
+            }
+
+            // Check if the file has ai-generated: true in frontmatter
+            return metadata.frontmatter['ai-generated'] === true;
+        } catch {
+            return false;
         }
     }
 }
